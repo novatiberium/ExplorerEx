@@ -1,8 +1,0 @@
-/.vs
-/explorer/x64
-/.idea
-x64/
-Release/
-Debug/
-*.user
-*.vcproj.user

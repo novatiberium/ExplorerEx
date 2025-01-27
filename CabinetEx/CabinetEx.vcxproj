@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{9a278f71-943f-4583-b706-3612267bde1f}</ProjectGuid>
+    <RootNamespace>CabinetEx</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/sdl /w34996 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ntdll.lib;Cfgmgr32.lib;oleacc.lib;winmm.lib;wininet.lib;mpr.lib;Userenv.lib;shell32.lib;ShLwApi.Lib;shcore.lib;user32.lib;msi.lib;wtsapi32.lib;comctl32.lib;%(AdditionalDependencies);dwmapi.lib;vcruntime.lib</AdditionalDependencies>
+      <EntryPointSymbol>ModuleEntry</EntryPointSymbol>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\cabwnd.c" />
+    <ClCompile Include="Source\cfgstart.c" />
+    <ClCompile Include="Source\command.c" />
+    <ClCompile Include="Source\cstrings.c" />
+    <ClCompile Include="Source\dde.c" />
+    <ClCompile Include="Source\debug.c" />
+    <ClCompile Include="Source\desktop.c" />
+    <ClCompile Include="Source\drivlist.c" />
+    <ClCompile Include="Source\explalt.c" />
+    <ClCompile Include="Source\explorer.c" />
+    <ClCompile Include="Source\fcext.c" />
+    <ClCompile Include="Source\fldrlist.c" />
+    <ClCompile Include="Source\initcab.c" />
+    <ClCompile Include="Source\mainloop.c" />
+    <ClCompile Include="Source\message.c" />
+    <ClCompile Include="Source\nothunk.c" />
+    <ClCompile Include="Source\onetree.c" />
+    <ClCompile Include="Source\recent.c" />
+    <ClCompile Include="Source\sfcache.c" />
+    <ClCompile Include="Source\shundoc.c" />
+    <ClCompile Include="Source\task.c" />
+    <ClCompile Include="Source\taskman.c" />
+    <ClCompile Include="Source\tc.c" />
+    <ClCompile Include="Source\tray.c" />
+    <ClCompile Include="Source\trayclok.c" />
+    <ClCompile Include="Source\traynot.c" />
+    <ClCompile Include="Source\tree.c" />
+    <ClCompile Include="Source\treedrop.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\cabinet.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cabinet.rcv" />
+    <None Include="Resources\Cursors\split.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Bitmaps\multwin.bmp" />
+    <Image Include="Resources\Bitmaps\onewin.bmp" />
+    <Image Include="Resources\Bitmaps\pointer.bmp" />
+    <Image Include="Resources\Bitmaps\srvbkg.bmp" />
+    <Image Include="Resources\Bitmaps\start.bmp" />
+    <Image Include="Resources\Bitmaps\startbkg.bmp" />
+    <Image Include="Resources\Bitmaps\vobase.bmp" />
+    <Image Include="Resources\Bitmaps\vomenu.bmp" />
+    <Image Include="Resources\Bitmaps\vonoclok.bmp" />
+    <Image Include="Resources\Bitmaps\votray.bmp" />
+    <Image Include="Resources\Bitmaps\vowindow.bmp" />
+    <Image Include="Resources\Icons\desktop.ico" />
+    <Image Include="Resources\Icons\docs.ico" />
+    <Image Include="Resources\Icons\goto.ico" />
+    <Image Include="Resources\Icons\mycomp.ico" />
+    <Image Include="Resources\Icons\printer.ico" />
+    <Image Include="Resources\Icons\printerr.ico" />
+    <Image Include="Resources\Icons\start.ico" />
+    <Image Include="Resources\Icons\treeup.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Headers\cabdde.h" />
+    <ClInclude Include="Headers\cabinet.h" />
+    <ClInclude Include="Headers\cabwnd.h" />
+    <ClInclude Include="Headers\cstrings.h" />
+    <ClInclude Include="Headers\debug.h" />
+    <ClInclude Include="Headers\dlgprocs.h" />
+    <ClInclude Include="Headers\drivlist.h" />
+    <ClInclude Include="Headers\fldrlist.h" />
+    <ClInclude Include="Headers\help.h" />
+    <ClInclude Include="Headers\ids.h" />
+    <ClInclude Include="Headers\onetree.h" />
+    <ClInclude Include="Headers\port32.h" />
+    <ClInclude Include="Headers\rcids.h" />
+    <ClInclude Include="Headers\resource.h" />
+    <ClInclude Include="Headers\shundoc.h" />
+    <ClInclude Include="Headers\svcs.h" />
+    <ClInclude Include="Headers\taskres.h" />
+    <ClInclude Include="Headers\trayclok.h" />
+    <ClInclude Include="Headers\traynot.h" />
+    <ClInclude Include="Headers\tree.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
