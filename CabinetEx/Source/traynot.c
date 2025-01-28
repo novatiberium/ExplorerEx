@@ -417,7 +417,7 @@ LRESULT _TNCreate(HWND hWnd)
         {
                 return(-1);
         }
-        SetWindowLong(hWnd, 0, (LONG)pTNPrivData);
+        SetWindowLongPtr(hWnd, 0, (LONG_PTR)pTNPrivData);
 
         pTNPrivData->hwndToolTips = CreateWindowEx(WS_EX_TOPMOST, c_szSToolTipsClass, c_szNULL,
                 WS_POPUP | TTS_ALWAYSTIP,
@@ -481,7 +481,7 @@ LRESULT _TNDestroy(PTNPRIVDATA pTNPrivData)
                         ImageList_Destroy(pTNPrivData->himlIcons);
                 }
 
-                SetWindowLong(pTNPrivData->hwndNotify, 0, 0);
+                SetWindowLongPtr(pTNPrivData->hwndNotify, 0, 0);
                 LocalFree((HLOCAL)pTNPrivData);
         }
 
@@ -674,7 +674,7 @@ LRESULT _TNCalcMinSize(PTNPRIVDATA pTNPrivData, int nMaxHorz)
 {
     RECT rTotal, rClock, rNotifies;
 
-    if (!(GetWindowLong(pTNPrivData->hwndClock, GWL_STYLE) & WS_VISIBLE) &&
+    if (!(GetWindowLongPtr(pTNPrivData->hwndClock, GWL_STYLE) & WS_VISIBLE) &&
         !DPA_GetPtrCount(pTNPrivData->hdpaIcons)) {
         ShowWindow(pTNPrivData->hwndNotify, SW_HIDE);
         return 0L;
@@ -884,7 +884,7 @@ LRESULT CALLBACK TrayNotifyWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 {
         PTNPRIVDATA pTNPrivData;
 
-        pTNPrivData = (PTNPRIVDATA)GetWindowLong(hWnd, 0);
+        pTNPrivData = (PTNPRIVDATA)GetWindowLongPtr(hWnd, 0);
 
         switch (uMsg)
         {
@@ -1013,7 +1013,7 @@ LRESULT TrayNotify(HWND hwndNotify, HWND hwndFrom, PCOPYDATASTRUCT pcds)
                 return(FALSE);
         }
 
-        pTNPrivData = (PTNPRIVDATA)GetWindowLong(hwndNotify, 0);
+        pTNPrivData = (PTNPRIVDATA)GetWindowLongPtr(hwndNotify, 0);
 
         if (pcds->cbData < sizeof(TRAYNOTIFYDATA))
         {

@@ -11,9 +11,9 @@ LONG WINAPI NoThkChangeDisplaySettings(
 }
 
 // BUGBUG - BobDay - KERNEL32 needs to export this.
-BOOL WINAPI SetSystemPowerState(
-    BOOL fSuspend,
-    BOOL fForce
-) {
-    return FALSE;
-}
+//BOOL WINAPI SetSystemPowerState(
+//    BOOL fSuspend,
+//    BOOL fForce
+//) {
+//    return FALSE;
+//}

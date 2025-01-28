@@ -46,6 +46,16 @@ const IDLREGITEM c_idlNet;
 const IDLREGITEM c_idlDrives;
 
 
+BOOL(STDMETHODCALLTYPE* SHFindComputer)(LPCITEMIDLIST pidlFolder, LPCITEMIDLIST pidlSaveFile);
+BOOL(STDMETHODCALLTYPE* RegisterShellHook)(HWND hwnd, BOOL fInstall);
+BOOL(STDMETHODCALLTYPE* FileIconInit)(BOOL fRestoreCache);
+INT(STDMETHODCALLTYPE* RunFileDlg)(HWND hwndParent, HICON hIcon, LPCTSTR pszWorkingDir, LPCTSTR pszTitle, LPCTSTR pszPrompt, DWORD dwFlags);
+HRESULT(STDMETHODCALLTYPE* ExitWindowsDialog)(HWND hwndParent);
+BOOL(WINAPI* DrawCaptionTempW)(HWND, HDC, LPRECT, HFONT, HICON, LPWSTR, UINT);
+BOOL(WINAPI* ILGetDisplayName)(LPCITEMIDLIST pidl, LPTSTR pszPath);
+
+BOOL(WINAPI* SetShellWindow)(HWND hwnd);
+
 //
 //	Classes
 //
@@ -534,96 +544,96 @@ DoExit:
     return hNew;
 }
 
-LPVOID SHLockSharedUnimpl(HANDLE  hData,DWORD   dwSourceProcessId) 
-{
-    LPSHMAPHEADER   lpmh;
-    HANDLE          hUsableData;
-
-    hUsableData = MapHandle(hData, dwSourceProcessId, GetCurrentProcessId(), FILE_MAP_ALL_ACCESS, 0);
-
-    //
-    // Now map that new process specific handle and close it
-    //
-    lpmh = MapViewOfFile(hUsableData, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, 0);
-    CloseHandle(hUsableData);
-
-    if (!lpmh)
-        return NULL;
-
-    return (LPVOID)(lpmh + 1);
-}
-
-BOOL SHUnlockSharedUnimpl(LPVOID  lpvData) 
-{
-    LPSHMAPHEADER lpmh = (LPSHMAPHEADER)lpvData;
-
-    //
-    // Now just unmap the view of the file
-    //
-    return UnmapViewOfFile(lpmh - 1);
-}
-
-HANDLE SHAllocSharedUnimpl(LPCVOID lpvData, DWORD   dwSize, DWORD   dwDestinationProcessId) 
-{
-    HANDLE  hData;
-    LPSHMAPHEADER lpmh;
-    HANDLE hUsableData;
-
-    //
-    // Make a filemapping handle with this data in it.
-    //
-    hData = CreateFileMapping((HANDLE)-1, NULL, PAGE_READWRITE, 0,
-        dwSize + sizeof(SHMAPHEADER), NULL);
-    if (hData == NULL)
-    {
-        // DebugMsg...
-        return NULL;
-    }
-
-    lpmh = MapViewOfFile(hData, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, 0);
-    if (!lpmh)
-    {
-        // DebugMsg...
-        CloseHandle(hData);
-        return NULL;
-    }
-    lpmh->dwSize = dwSize;
-
-    if (lpvData)
-        memcpy((LPVOID)(lpmh + 1), lpvData, dwSize);
-
-    UnmapViewOfFile(lpmh);
-
-    hUsableData = MapHandle(hData,
-        GetCurrentProcessId(),
-        dwDestinationProcessId,
-        FILE_MAP_ALL_ACCESS,
-        DUPLICATE_CLOSE_SOURCE);
-    if (!hUsableData)
-    {
-        CloseHandle(hData);
-    }
-
-    return hUsableData;
-}
-
-BOOL SHFreeSharedUnimpl(HANDLE hData, DWORD dwSourceProcessId)
-{
-    HANDLE hUsableData;
-
-    //
-    // The below call closes the original handle in whatever process it
-    // came from.
-    //
-    hUsableData = MapHandle(hData, dwSourceProcessId,
-        GetCurrentProcessId(),
-        FILE_MAP_ALL_ACCESS, DUPLICATE_CLOSE_SOURCE);
-
-    //
-    // Now free up the local handle
-    //
-    return CloseHandle(hUsableData);
-}
+//LPVOID SHLockSharedUnimpl(HANDLE  hData,DWORD   dwSourceProcessId) 
+//{
+//    LPSHMAPHEADER   lpmh;
+//    HANDLE          hUsableData;
+//
+//    hUsableData = MapHandle(hData, dwSourceProcessId, GetCurrentProcessId(), FILE_MAP_ALL_ACCESS, 0);
+//
+//    //
+//    // Now map that new process specific handle and close it
+//    //
+//    lpmh = MapViewOfFile(hUsableData, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, 0);
+//    CloseHandle(hUsableData);
+//
+//    if (!lpmh)
+//        return NULL;
+//
+//    return (LPVOID)(lpmh + 1);
+//}
+//
+//BOOL SHUnlockSharedUnimpl(LPVOID  lpvData) 
+//{
+//    LPSHMAPHEADER lpmh = (LPSHMAPHEADER)lpvData;
+//
+//    //
+//    // Now just unmap the view of the file
+//    //
+//    return UnmapViewOfFile(lpmh - 1);
+//}
+//
+//HANDLE SHAllocSharedUnimpl(LPCVOID lpvData, DWORD   dwSize, DWORD   dwDestinationProcessId) 
+//{
+//    HANDLE  hData;
+//    LPSHMAPHEADER lpmh;
+//    HANDLE hUsableData;
+//
+//    //
+//    // Make a filemapping handle with this data in it.
+//    //
+//    hData = CreateFileMapping((HANDLE)-1, NULL, PAGE_READWRITE, 0,
+//        dwSize + sizeof(SHMAPHEADER), NULL);
+//    if (hData == NULL)
+//    {
+//        // DebugMsg...
+//        return NULL;
+//    }
+//
+//    lpmh = MapViewOfFile(hData, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, 0);
+//    if (!lpmh)
+//    {
+//        // DebugMsg...
+//        CloseHandle(hData);
+//        return NULL;
+//    }
+//    lpmh->dwSize = dwSize;
+//
+//    if (lpvData)
+//        memcpy((LPVOID)(lpmh + 1), lpvData, dwSize);
+//
+//    UnmapViewOfFile(lpmh);
+//
+//    hUsableData = MapHandle(hData,
+//        GetCurrentProcessId(),
+//        dwDestinationProcessId,
+//        FILE_MAP_ALL_ACCESS,
+//        DUPLICATE_CLOSE_SOURCE);
+//    if (!hUsableData)
+//    {
+//        CloseHandle(hData);
+//    }
+//
+//    return hUsableData;
+//}
+//
+//BOOL SHFreeSharedUnimpl(HANDLE hData, DWORD dwSourceProcessId)
+//{
+//    HANDLE hUsableData;
+//
+//    //
+//    // The below call closes the original handle in whatever process it
+//    // came from.
+//    //
+//    hUsableData = MapHandle(hData, dwSourceProcessId,
+//        GetCurrentProcessId(),
+//        FILE_MAP_ALL_ACCESS, DUPLICATE_CLOSE_SOURCE);
+//
+//    //
+//    // Now free up the local handle
+//    //
+//    return CloseHandle(hUsableData);
+//}
 
 LPTSTR WINAPI PathFindFileNameUnimpl(LPCTSTR pPath)
 {
@@ -2516,56 +2526,56 @@ LPITEMIDLIST WINAPI _ILCreate(UINT cbSize)
     return pidl;
 }
 
-HRESULT WINAPI ILLoadFromStream(LPSTREAM pstm, LPITEMIDLIST* ppidl)
-{
-    HRESULT hres;
-    ULONG cb;
-
-
-    // Delete the old one if any.
-    if (*ppidl)
-    {
-        ILFree(*ppidl);
-        *ppidl = NULL;
-    }
-
-    // Read the size of the IDLIST
-    cb = 0;             // WARNING: We need to fill its HIWORD!
-    hres = pstm->lpVtbl->Read(pstm, &cb, sizeof(USHORT), NULL); // Yes, USHORT
-    if (SUCCEEDED(hres) && cb)
-    {
-        // Create a IDLIST
-        LPITEMIDLIST pidl = _ILCreate(cb);
-        if (pidl)
-        {
-            // Read its contents
-            hres = pstm->lpVtbl->Read(pstm, pidl, cb, NULL);
-            if (SUCCEEDED(hres))
-            {
-#define SUPPORT_M6PIDL
-#ifdef SUPPORT_M6PIDL
-                if (pidl->mkid.cb == 3 && (pidl->mkid.abID[0] == 0x11 || pidl->mkid.abID[0] == 0x12))
-                {
-                    LPITEMIDLIST pidlHack = ILCombine((LPCITEMIDLIST)(pidl->mkid.abID[0] == 0x11 ? &c_idlDrives : &c_idlNet), _ILNext(pidl));
-                    ILFree(pidl);
-                    pidl = pidlHack;
-                }
-#endif // SUPPORT_M6PIDL
-                * ppidl = pidl;
-            }
-            else
-            {
-                ILFree(pidl);
-            }
-        }
-        else
-        {
-            hres = ResultFromScode(E_OUTOFMEMORY);
-        }
-    }
-
-    return hres;
-}
+//HRESULT WINAPI ILLoadFromStreamEx(LPSTREAM pstm, LPITEMIDLIST* ppidl)
+//{
+//    HRESULT hres;
+//    ULONG cb;
+//
+//
+//    // Delete the old one if any.
+//    if (*ppidl)
+//    {
+//        ILFree(*ppidl);
+//        *ppidl = NULL;
+//    }
+//
+//    // Read the size of the IDLIST
+//    cb = 0;             // WARNING: We need to fill its HIWORD!
+//    hres = pstm->lpVtbl->Read(pstm, &cb, sizeof(USHORT), NULL); // Yes, USHORT
+//    if (SUCCEEDED(hres) && cb)
+//    {
+//        // Create a IDLIST
+//        LPITEMIDLIST pidl = _ILCreate(cb);
+//        if (pidl)
+//        {
+//            // Read its contents
+//            hres = pstm->lpVtbl->Read(pstm, pidl, cb, NULL);
+//            if (SUCCEEDED(hres))
+//            {
+//#define SUPPORT_M6PIDL
+//#ifdef SUPPORT_M6PIDL
+//                if (pidl->mkid.cb == 3 && (pidl->mkid.abID[0] == 0x11 || pidl->mkid.abID[0] == 0x12))
+//                {
+//                    LPITEMIDLIST pidlHack = ILCombine((LPCITEMIDLIST)(pidl->mkid.abID[0] == 0x11 ? &c_idlDrives : &c_idlNet), _ILNext(pidl));
+//                    ILFree(pidl);
+//                    pidl = pidlHack;
+//                }
+//#endif // SUPPORT_M6PIDL
+//                * ppidl = pidl;
+//            }
+//            else
+//            {
+//                ILFree(pidl);
+//            }
+//        }
+//        else
+//        {
+//            hres = ResultFromScode(E_OUTOFMEMORY);
+//        }
+//    }
+//
+//    return hres;
+//}
 
 BOOL g_fUseOle = TRUE;  // enable OLE drag&drop by default!
 STDAPI SHFlushClipboard(void)
@@ -2873,6 +2883,8 @@ BOOL SHUndocInit(void)
 
     LOAD_MODULE(user32);
     LOAD_FUNCTION(user32, DrawCaptionTempW);
+    //LOAD_ORDINAL(user32, SetShellWindow,2369);
+    LOAD_FUNCTION(user32, SetShellWindow);
 
     return TRUE;
 }

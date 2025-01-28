@@ -10,6 +10,7 @@
 //
 //---------------------------------------------------------------------------
 #include "..\Headers\cabinet.h"
+#include "shlwapi.h"
 
 HDPA s_hdpaFolders = NULL;
 
@@ -220,7 +221,7 @@ void FolderList_Register(HWND hwnd,const CLSID *pclsid,LPCITEMIDLIST pidlRoot,LP
         HANDLE hcr;
 
         GetWindowThreadProcessId(hwndDesktop,&dwProcId);
-        hcr = SHAllocSharedUnimpl(lpcr,lpcr->uSize,dwProcId);
+        hcr = SHAllocShared(lpcr,lpcr->uSize,dwProcId);
         LocalFree(lpcr);
         if (!hcr)
         {
@@ -272,7 +273,7 @@ void FolderList_Unregister(HWND hwnd)
         HANDLE hcr;
 
         GetWindowThreadProcessId(hwndDesktop,&dwProcId);
-        hcr = SHAllocSharedUnimpl(&cr,cr.uSize,dwProcId);
+        hcr = SHAllocShared(&cr,cr.uSize,dwProcId);
         if (!hcr)
         {
             return;     // If this fails, something else will soon enough

@@ -514,7 +514,7 @@ typedef HANDLE LPSHChangeNotificationLock;
 
 #define TOKEN_NOEXPRESSION 0x8000
 
-#define     GetWindowStyle(hwnd)    ((DWORD)GetWindowLong(hwnd, GWL_STYLE))
+#define     GetWindowStyle(hwnd)    (GetWindowLongPtr(hwnd, GWL_STYLE))
 
 #define _ILSkip(pidl, cb)       ((LPITEMIDLIST)(((BYTE*)(pidl))+cb))
 #define _ILNext(pidl)           _ILSkip(pidl, (pidl)->mkid.cb)
@@ -907,10 +907,10 @@ void SHChangeNotifyReceive(LONG lEvent, UINT uFlags, LPCITEMIDLIST pidl, LPCITEM
 HRESULT WINAPI SHRevokeDragDrop(HWND hwnd);
 HRESULT WINAPI SHRegisterDragDrop(HWND hwnd, LPDROPTARGET pdtgt);
 int WINAPI SHOutOfMemoryMessageBox(HWND hwndOwner, LPTSTR pszTitle, UINT fuStyle);
-LPVOID SHLockSharedUnimpl(HANDLE  hData, DWORD   dwSourceProcessId);
-BOOL SHUnlockSharedUnimpl(LPVOID  lpvData);
-HANDLE SHAllocSharedUnimpl(LPCVOID lpvData, DWORD   dwSize, DWORD   dwDestinationProcessId);
-BOOL SHFreeSharedUnimpl(HANDLE hData, DWORD dwSourceProcessId);
+//LPVOID SHLockSharedUnimpl(HANDLE  hData, DWORD   dwSourceProcessId);
+//BOOL SHUnlockSharedUnimpl(LPVOID  lpvData);
+//HANDLE SHAllocSharedUnimpl(LPCVOID lpvData, DWORD   dwSize, DWORD   dwDestinationProcessId);
+//BOOL SHFreeSharedUnimpl(HANDLE hData, DWORD dwSourceProcessId);
 BOOL WINAPI SHWinHelpUnimpl(HWND hwndMain, LPCTSTR lpszHelp, UINT usCommand, DWORD ulData);
 LPTSTR WINAPI PathFindFileNameUnimpl(LPCTSTR pPath);
 BOOL  WINAPI PathIsRootUnimpl(LPCTSTR pPath);
@@ -972,7 +972,7 @@ void FSNRemoveInterruptEvent(LPCITEMIDLIST pidl);
 LPCTSTR GetPCEnd(LPCTSTR lpszStart);
 BOOL IsILShared(LPCITEMIDLIST pidl, BOOL fUpdateCache);
 LPCTSTR PCStart(LPCTSTR lpszStart, LPCTSTR lpszEnd);
-HRESULT WINAPI ILLoadFromStream(LPSTREAM pstm, LPITEMIDLIST* ppidl);
+//HRESULT WINAPI ILLoadFromStreamEx(LPSTREAM pstm, LPITEMIDLIST* ppidl);
 HANDLE MapHandle(HANDLE hData, DWORD dwSource, DWORD dwDest, DWORD dwDesiredAccess, DWORD dwFlags);
 LPDROPTARGETINFO SHDrag_FindDropTarget(HWND hwndTarget, int* pi, BOOL fInContext);
 STDAPI SHFlushClipboard(void);
@@ -987,15 +987,15 @@ void WINAPI ReceiveAddToRecentDocs(HANDLE hARD, DWORD dwProcId);
 
 
 // LOAD_MODULE shiz
-BOOL(STDMETHODCALLTYPE* SHFindComputer)(LPCITEMIDLIST pidlFolder, LPCITEMIDLIST pidlSaveFile);
-BOOL(STDMETHODCALLTYPE* RegisterShellHook)(HWND hwnd, BOOL fInstall);
-BOOL(STDMETHODCALLTYPE* FileIconInit)(BOOL fRestoreCache);
-INT(STDMETHODCALLTYPE* RunFileDlg)(HWND hwndParent, HICON hIcon, LPCTSTR pszWorkingDir, LPCTSTR pszTitle, LPCTSTR pszPrompt, DWORD dwFlags);
-HRESULT(STDMETHODCALLTYPE* ExitWindowsDialog)(HWND hwndParent);
-BOOL(WINAPI* DrawCaptionTempW)(HWND, HDC, LPRECT, HFONT, HICON, LPWSTR, UINT);
-BOOL(WINAPI* ILGetDisplayName)(LPCITEMIDLIST pidl, LPTSTR pszPath);
+extern BOOL(STDMETHODCALLTYPE* SHFindComputer)(LPCITEMIDLIST pidlFolder, LPCITEMIDLIST pidlSaveFile);
+extern BOOL(STDMETHODCALLTYPE* RegisterShellHook)(HWND hwnd, BOOL fInstall);
+extern BOOL(STDMETHODCALLTYPE* FileIconInit)(BOOL fRestoreCache);
+extern INT(STDMETHODCALLTYPE* RunFileDlg)(HWND hwndParent, HICON hIcon, LPCTSTR pszWorkingDir, LPCTSTR pszTitle, LPCTSTR pszPrompt, DWORD dwFlags);
+extern HRESULT(STDMETHODCALLTYPE* ExitWindowsDialog)(HWND hwndParent);
+extern BOOL(WINAPI* DrawCaptionTempW)(HWND, HDC, LPRECT, HFONT, HICON, LPWSTR, UINT);
+extern BOOL(WINAPI* ILGetDisplayName)(LPCITEMIDLIST pidl, LPTSTR pszPath);
 
-
+extern BOOL  (WINAPI*SetShellWindow)(HWND hwnd);
 
 
 

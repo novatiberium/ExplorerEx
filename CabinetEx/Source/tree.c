@@ -1150,16 +1150,16 @@ LRESULT Tree_HandleSplitDrag(PFileCabinet pfc, int x)
         if (IsIconic(hwndCabinet))
                 return 0;
 
-        lStyle = GetWindowLong(hwndCabinet, GWL_STYLE);
+        lStyle = GetWindowLongPtr(hwndCabinet, GWL_STYLE);
         lStyle &= ~WS_CLIPCHILDREN;
-        SetWindowLong(hwndCabinet, GWL_STYLE, lStyle);
+        SetWindowLongPtr(hwndCabinet, GWL_STYLE, lStyle);
 
         dx = g_cxSizeFrame;
         GetClientRect(pfc->hwndTree, &rc);
         MapWindowRect(pfc->hwndTree, hwndCabinet, &rc);
 
         // Add some for the scroll bar
-        if (GetWindowLong(pfc->hwndTree, GWL_STYLE) & WS_HSCROLL)
+        if (GetWindowLongPtr(pfc->hwndTree, GWL_STYLE) & WS_HSCROLL)
         {
             rc.bottom += GetSystemMetrics(SM_CYHSCROLL);
         }
@@ -1310,7 +1310,7 @@ LRESULT Tree_HandleSplitDrag(PFileCabinet pfc, int x)
         ReleaseDC(hwndCabinet, hdc);
 
         lStyle |= WS_CLIPCHILDREN;
-        SetWindowLong(hwndCabinet, GWL_STYLE, lStyle);
+        SetWindowLongPtr(hwndCabinet, GWL_STYLE, lStyle);
 
         if (msg.wParam != VK_ESCAPE && msg.message != WM_RBUTTONDOWN && msg.message != WM_CAPTURECHANGED)
         {

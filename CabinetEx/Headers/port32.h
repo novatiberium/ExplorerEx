@@ -20,11 +20,11 @@
 #define DATASEG_SHARED                  // default data goes here
 #define CODESEG_INIT 	    ".text"
 
-#define GetWindowInt    	GetWindowLong
-#define SetWindowInt    	SetWindowLong
-#define SetWindowID(hwnd,id)    SetWindowLong(hwnd, GWL_ID, id)
-#define GetClassCursor(hwnd)    ((HCURSOR)GetClassLong(hwnd, GCL_HCURSOR))
-#define GetClassIcon(hwnd)      ((HICON)GetClassLong(hwnd, GCL_HICON))
+#define GetWindowInt    	GetWindowLongPtr
+#define SetWindowInt    	SetWindowLongPtr
+#define SetWindowID(hwnd,id)    SetWindowLongPtr(hwnd, GWL_ID, id)
+#define GetClassCursor(hwnd)    ((HCURSOR)GetClassLongPtr(hwnd, GCL_HCURSOR))
+#define GetClassIcon(hwnd)      ((HICON)GetClassLongPtr(hwnd, GCL_HICON))
 
 
 #ifdef WINNT

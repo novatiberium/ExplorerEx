@@ -141,7 +141,7 @@ UINT PeekForAMessage(PFileCabinet pfc, HWND hwnd, BOOL fHandleClose)
 
 void MessageLoop(HWND hwnd)
 {
-    PFileCabinet pfc;
+    PFileCabinet pfc = 0;
 
     if (hwnd)
     {
@@ -153,6 +153,8 @@ void MessageLoop(HWND hwnd)
         g_ppfcDesktopTray = &pfc;
         hwnd = v_hwndDesktop;
     }
+
+    if (!pfc) return;
 
     //Assert(pfc);        // should have one of these
 

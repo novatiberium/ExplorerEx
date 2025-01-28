@@ -283,7 +283,7 @@ void CheckSize(PTasks ptasks, BOOL fForceResize)
     RECT rcItem;
 
     GetWindowRect(ptasks->hwnd, &rc);
-    if (IsRectEmpty(&rc) || !(GetWindowLong(ptasks->hwndTab, GWL_STYLE) & WS_VISIBLE))
+    if (IsRectEmpty(&rc) || !(GetWindowLongPtr(ptasks->hwndTab, GWL_STYLE) & WS_VISIBLE))
         return;
 
     iWinWidth = RECTWIDTH(rc);
@@ -468,7 +468,7 @@ void TaskList_SwitchToWindow(PTasks ptasks, HWND hwnd)
 }
 
 void CALLBACK _FakeSystemMenuCallback(HWND hwnd, UINT uiMsg,
-                                DWORD dwData, LRESULT result)
+                                LONG_PTR dwData, LRESULT result)
 {
     PTasks ptasks = (PTasks)dwData;
     KillTimer(ptasks->hwnd, IDT_SYSMENU);
@@ -590,8 +590,8 @@ void TaskList_FakeSystemMenu(PTasks ptasks, HWND hwndTask, DWORD dwPos)
 #endif
 
     ptasks->iSysMenuCount++;
-    if (!SendMessageCallback(hwndTask, WM_SYSMENU, 0, dwPos, _FakeSystemMenuCallback, (DWORD)ptasks)) {
-        _FakeSystemMenuCallback(hwndTask, WM_SYSMENU, (DWORD)ptasks, 0);
+    if (!SendMessageCallback(hwndTask, WM_SYSMENU, 0, dwPos, _FakeSystemMenuCallback, ptasks)) {
+        _FakeSystemMenuCallback(hwndTask, WM_SYSMENU, ptasks, 0);
     }
 }
 
@@ -741,7 +741,7 @@ BOOL CALLBACK TaskList_BuildCallback(HWND hwnd, LPARAM lParam)
 {
     PTasks ptasks = (PTasks)lParam;
     if (IsWindow(hwnd) && IsWindowVisible(hwnd) && !GetWindow(hwnd, GW_OWNER) &&
-        (!(GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_TOOLWINDOW))) {
+        (!(GetWindowLongPtr(hwnd, GWL_EXSTYLE) & WS_EX_TOOLWINDOW))) {
 
         TaskList_AddWindow(ptasks, hwnd);
 
@@ -754,7 +754,7 @@ LRESULT _HandleCreate(HWND hwnd, LPVOID lpCreateParams)
 {
     PTasks ptasks = lpCreateParams;
 
-    SetWindowLong(hwnd, 0, (UINT)ptasks);
+    SetWindowLongPtr(hwnd, 0, (LONG_PTR)ptasks);
 
     ptasks->hwnd = hwnd;
 
@@ -949,7 +949,7 @@ void _HandleOtherWindowDestroyed(PTasks ptasks, HWND hwndDestroyed)
     }
     else
     {
-        if (!(GetWindowLong(ptasks->hwndTab, GWL_STYLE) & WS_VISIBLE))
+        if (!(GetWindowLongPtr(ptasks->hwndTab, GWL_STYLE) & WS_VISIBLE))
             ShowWindow(ptasks->hwndTab, SW_SHOWNORMAL);
     }
 
@@ -1128,7 +1128,7 @@ LRESULT _HandleShellHook(PTasks ptasks, int code, LPARAM lParam)
             if ((code == HSHELL_WINDOWACTIVATED) ||
 
                 (hwndShell && (g_ts.uAutoHide & AH_ON) &&
-                 GetWindowLong(hwndShell, GWL_STYLE) & WS_SYSMENU) ||
+                 GetWindowLongPtr(hwndShell, GWL_STYLE) & WS_SYSMENU) ||
 
                 (!hwndShell && (GetForegroundWindow() == v_hwndTray))) {
 
@@ -1387,7 +1387,7 @@ void TaskList_TaskTab(PTasks ptasks, UINT iIncr)
 
 LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    PTasks ptasks = (PTasks)GetWindowLong(hwnd, 0);
+    PTasks ptasks = (PTasks)GetWindowLongPtr(hwnd, 0);
     PAINTSTRUCT ps;
     LRESULT lres;
 
@@ -1824,10 +1824,10 @@ void SetWindowStyleBit(HWND hWnd, DWORD dwBit, DWORD dwValue)
 {
     DWORD dwStyle;
 
-    dwStyle = GetWindowLong(hWnd, GWL_STYLE);
+    dwStyle = GetWindowLongPtr(hWnd, GWL_STYLE);
     if ((dwStyle & dwBit) != dwValue) {
         dwStyle ^= dwBit;
-        SetWindowLong(hWnd, GWL_STYLE, dwStyle);
+        SetWindowLongPtr(hWnd, GWL_STYLE, dwStyle);
     }
 }
 
@@ -2025,7 +2025,7 @@ void DrawBanner(PTasks ptasks, HDC hdc)
 BOOL ShouldMinimize(HWND hwnd)
 {
     return IsWindowVisible(hwnd) &&
-            ((GetWindowLong(hwnd, GWL_STYLE) & (WS_CAPTION | WS_SYSMENU)) == (WS_CAPTION | WS_SYSMENU)) &&
+            ((GetWindowLongPtr(hwnd, GWL_STYLE) & (WS_CAPTION | WS_SYSMENU)) == (WS_CAPTION | WS_SYSMENU)) &&
                 !IsMinimized(hwnd) && IsWindowEnabled(hwnd)
                 ;
 }
@@ -2034,7 +2034,7 @@ void SaveWindowPositions(UINT idRes);
 
 BOOL CanMinimizeAll(HWND hwndView)
 {
-    PTasks ptasks = (PTasks)GetWindowLong(hwndView, 0);
+    PTasks ptasks = (PTasks)GetWindowLongPtr(hwndView, 0);
     int i;
 
     for ( i = (int)TabCtrl_GetItemCount(ptasks->hwndTab) -1; i >= 0; i--)
@@ -2049,7 +2049,7 @@ BOOL CanMinimizeAll(HWND hwndView)
 
 void MinimizeAll(HWND hwndView)
 {
-    PTasks ptasks = (PTasks)GetWindowLong(hwndView, 0);
+    PTasks ptasks = (PTasks)GetWindowLongPtr(hwndView, 0);
     LONG iAnimate;
     ANIMATIONINFO ami;
     int i;
@@ -2083,7 +2083,7 @@ void MinimizeAll(HWND hwndView)
 
 int Task_HitTest(HWND hwndTask, POINTL ptl)
 {
-    PTasks ptasks = (PTasks)GetWindowLong(hwndTask, 0);
+    PTasks ptasks = (PTasks)GetWindowLongPtr(hwndTask, 0);
     if (ptasks)
     {
         TC_HITTESTINFO hitinfo = { {ptl.x, ptl.y}, TCHT_ONITEM };
@@ -2096,7 +2096,7 @@ int Task_HitTest(HWND hwndTask, POINTL ptl)
 
 void Task_SetCurSel(HWND hwndTask, int i)
 {
-    PTasks ptasks = (PTasks)GetWindowLong(hwndTask, 0);
+    PTasks ptasks = (PTasks)GetWindowLongPtr(hwndTask, 0);
     if (ptasks)
     {
         TabCtrl_SetCurSel(ptasks->hwndTab, i);

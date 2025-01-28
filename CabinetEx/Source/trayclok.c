@@ -154,7 +154,7 @@ LRESULT  ClockCtl_CalcMinSize(HWND hWnd)
     TCHAR szTime[20];
     int cch;
 
-    if (!(GetWindowLong(hWnd, GWL_STYLE) & WS_VISIBLE))
+    if (!(GetWindowLongPtr(hWnd, GWL_STYLE) & WS_VISIBLE))
         return 0L;
 
     if (g_szTimeFmt[0] == TEXT('\0'))
@@ -203,8 +203,8 @@ LRESULT  ClockCtl_CalcMinSize(HWND hWnd)
     SetRect(&rc, 0, 0, max(sizeAM.cx, sizePM.cx),
             max(sizeAM.cy, sizePM.cy) + 4 * g_cyBorder);
 
-    AdjustWindowRectEx(&rc, GetWindowLong(hWnd, GWL_STYLE), FALSE,
-            GetWindowLong(hWnd, GWL_EXSTYLE));
+    AdjustWindowRectEx(&rc, GetWindowLongPtr(hWnd, GWL_STYLE), FALSE,
+            GetWindowLongPtr(hWnd, GWL_EXSTYLE));
 
     // make sure we're at least the size of other buttons:
     if (rc.bottom - rc.top <  g_cySize + g_cyEdge)

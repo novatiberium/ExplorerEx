@@ -146,8 +146,8 @@ void CTreeDropTarget_Register(LPFileCabinet pfc);
 void CTreeDropTarget_Revoke(LPFileCabinet pfc);
 
 #ifdef WIN32
-#define GetPFC(hwnd)        ((PFileCabinet)GetWindowLong(hwnd, 0))
-#define SetPFC(hwnd, pfc)   SetWindowLong((hwnd), 0, (LONG)(pfc))
+#define GetPFC(hwnd)        ((PFileCabinet)GetWindowLongPtr(hwnd, 0))
+#define SetPFC(hwnd, pfc)   SetWindowLongPtr((hwnd), 0, (LONG_PTR)(pfc))
 #else  // WIN32
 #define GetPFC(hwnd)        ((PFileCabinet)GetWindowWord(hwnd, 0))
 #define SetPFC(hwnd, pfc)   SetWindowWord((hwnd), 0, (WORD)(pfc))

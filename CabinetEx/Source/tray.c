@@ -569,8 +569,8 @@ HWND Tray_MakeStartButton(HWND hwndTray)
     if (hwnd) {
         // Subclass it.
         g_ts.hwndStart = hwnd;
-        g_ButtonProc = (WNDPROC)GetWindowLong(hwnd, GWLP_WNDPROC);
-        SetWindowLong(hwnd, GWLP_WNDPROC, (LONG)(FARPROC)StartButtonSubclassWndProc);
+        g_ButtonProc = (WNDPROC)GetWindowLongPtr(hwnd, GWLP_WNDPROC);
+        SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)StartButtonSubclassWndProc);
 
         hbm = CreateStartBitmap(hwndTray);
         if (hbm) {
@@ -1391,7 +1391,7 @@ void Tray_HandleFullScreenApp(BOOL fFullScreen, HWND hwnd)
     // in autohide mode, only drop if the window activated has no sysmenu
     if (hwnd) {
         if (fFullScreen && (g_ts.uAutoHide & AH_ON) &&
-            GetWindowLong(hwnd, GWL_STYLE) & WS_SYSMENU) {
+            GetWindowLongPtr(hwnd, GWL_STYLE) & WS_SYSMENU) {
             //safe to bail here.  fFullScreen is true so we're guaranteed to
             // get another notification later with fFullScreen = FALSE
             fFullScreen = FALSE;
@@ -1556,7 +1556,7 @@ BOOL Reg_ShellOpenForExtension(LPCTSTR pszExt, LPTSTR pszCmdLine,
         pszTypeName[0] = TEXT('\0');
 
     // Is the extension registed at all?
-    cb = sizeof(sz);
+    cb = sizeof(sz) / sizeof(TCHAR);
     sz[0] = TEXT('\0');
     if (RegQueryValue(HKEY_CLASSES_ROOT, pszExt, sz, &cb) == ERROR_SUCCESS)
     {
@@ -1579,7 +1579,7 @@ BOOL Reg_ShellOpenForExtension(LPCTSTR pszExt, LPTSTR pszCmdLine,
         // See if there's an open command.
         lstrcat(szExt, TEXT("\\"));
         lstrcat(szExt, c_szShellOpenCommand);
-        cb = sizeof(sz);
+        cb = sizeof(sz) / sizeof(TCHAR);
         if (RegQueryValue(HKEY_CLASSES_ROOT, szExt, sz, &cb) == ERROR_SUCCESS)
         {
             // DebugMsg(DM_TRACE, "c.r_rofe: Extension %s already registed with an open command.", pszExt);
@@ -1628,7 +1628,7 @@ BOOL Reg_ShellOpenForExtension(LPCTSTR pszExt, LPTSTR pszCmdLine,
             // changed (return FALSE so the change is reflected in the registry) or
             // if the registry changed (return TRUE so we keep the registry the way
             // it is.
-            if (Reg_GetString(HKEY_LOCAL_MACHINE, c_szRegPathIniExtensions, pszExt, sz, sizeof(sz)))
+            if (Reg_GetString(HKEY_LOCAL_MACHINE, c_szRegPathIniExtensions, pszExt, sz, sizeof(sz) / sizeof(TCHAR)))
             {
                 if (lstrcmpi(sz, pszLine) == 0)
                     return TRUE;
@@ -1763,7 +1763,7 @@ void CheckWinIniForAssocs(void)
         {
             // Yep, Setup the initial list of ini extensions in the registry if they are
             // not there already.
-            if (!Reg_GetString(HKEY_LOCAL_MACHINE, c_szRegPathIniExtensions, szExtension, szTypeName, sizeof(szTypeName)))
+            if (!Reg_GetString(HKEY_LOCAL_MACHINE, c_szRegPathIniExtensions, szExtension, szTypeName, sizeof(szTypeName) / sizeof(TCHAR)))
             {
                 Reg_SetString(HKEY_LOCAL_MACHINE, c_szRegPathIniExtensions, szExtension, pszLine);
             }
@@ -1969,13 +1969,13 @@ const TCHAR c_szSlashCLSID[] = TEXT("\\CLSID");
 HRESULT _CLSIDFromExtension(LPCTSTR pszExt, CLSID *pclsid)
 {
     TCHAR szProgID[80];
-    ULONG cb = sizeof(szProgID);
+    ULONG cb = sizeof(szProgID) / sizeof(TCHAR);
     if (RegQueryValue(HKEY_CLASSES_ROOT, pszExt, szProgID, &cb) == ERROR_SUCCESS)
     {
         TCHAR szCLSID[80];
 
         lstrcat(szProgID, c_szSlashCLSID);
-        cb = sizeof(szCLSID);
+        cb = sizeof(szCLSID) / sizeof(TCHAR);
 
         if (RegQueryValue(HKEY_CLASSES_ROOT, szProgID, szCLSID, &cb) == ERROR_SUCCESS)
             return SHCLSIDFromString(szCLSID, pclsid);
@@ -3046,7 +3046,7 @@ void _ForceStartButtonUp()
 int Tray_TrackMenu(PFileCabinet pfc, HMENU hmenu, BOOL fFileMenu)
 {
     TPMPARAMS tpm;
-    int iret;
+    int iret = 0;
 
     tpm.cbSize = sizeof(tpm);
     GetClientRect(pfc->hwndToolbar, &tpm.rcExclude);
@@ -3444,7 +3444,7 @@ int Window_GetClientGapHeight(HWND hwnd)
         RECT rc;
 
         SetRectEmpty(&rc);
-        AdjustWindowRectEx(&rc, GetWindowLong(hwnd, GWL_STYLE), FALSE, GetWindowLong(hwnd, GWL_EXSTYLE));
+        AdjustWindowRectEx(&rc, GetWindowLongPtr(hwnd, GWL_STYLE), FALSE, GetWindowLongPtr(hwnd, GWL_EXSTYLE));
         return RECTHEIGHT(rc);
 }
 
@@ -3823,7 +3823,7 @@ const static DWORD aTaskOptionsHelpIDs[] = {  // Context Help IDs
 
 BOOL CALLBACK TrayViewOptionsDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    LPPROPSHEETPAGE psp = (LPPROPSHEETPAGE)GetWindowLong(hDlg, DWL_USER);
+    LPPROPSHEETPAGE psp = (LPPROPSHEETPAGE)GetWindowLongPtr(hDlg, DWL_USER);
 
     switch (uMsg) {
 
@@ -3833,7 +3833,7 @@ BOOL CALLBACK TrayViewOptionsDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         break;
 
     case WM_INITDIALOG:
-        SetWindowLong(hDlg, DWL_USER, lParam);
+        SetWindowLongPtr(hDlg, DWL_USER, lParam);
 
         if (g_ts.fAlwaysOnTop)
             CheckDlgButton(hDlg, IDC_TRAYOPTONTOP, TRUE);
@@ -3915,18 +3915,19 @@ STDMETHODIMP CShellTray_AddViewPropertySheetPages(IShellBrowser * psb,
 {
     HPROPSHEETPAGE hpage;
     PROPSHEETPAGE psp;
+    ZeroMemory(&psp, sizeof(PROPSHEETPAGE));
 
     psp.dwSize = sizeof(psp);
     psp.dwFlags = PSP_DEFAULT;
     psp.hInstance = hinstCabinet;
-    psp.pszTemplate = MAKEINTRESOURCE(DLG_TRAY_VIEW_OPTIONS);
+    psp.pResource = MAKEINTRESOURCE(DLG_TRAY_VIEW_OPTIONS);
     psp.pfnDlgProc = TrayViewOptionsDlgProc;
     psp.lParam = (LPARAM)psb;
     hpage = CreatePropertySheetPage(&psp);
     if (hpage)
         lpfn(hpage, lParam);
 
-    psp.pszTemplate = MAKEINTRESOURCE(DLG_STARTMENU_CONFIG);
+    psp.pResource = MAKEINTRESOURCE(DLG_STARTMENU_CONFIG);
     psp.pfnDlgProc = InitStartMenuDlgProc;
     psp.lParam = (LPARAM)psb;
     hpage = CreatePropertySheetPage(&psp);
@@ -5934,7 +5935,7 @@ LRESULT CALLBACK TrayWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
     case WM_SIZE:
-        if (pfc && ((GetWindowLong(hWnd, GWL_STYLE)) & WS_MINIMIZE)) {
+        if (pfc && ((GetWindowLongPtr(hWnd, GWL_STYLE)) & WS_MINIMIZE)) {
             ShowWindow(hWnd, SW_RESTORE);
         }
             if (!g_ts.fSysSizing || g_fDragFullWindows)
@@ -6171,6 +6172,7 @@ void RealTrayProperties(HWND hwndParent, PFileCabinet pfc)
     HPROPSHEETPAGE ahpage[MAX_FILE_PROP_PAGES];
     TCHAR szPath[MAX_PATH];
     PROPSHEETHEADER psh;
+    ZeroMemory(&psh, sizeof(psh));
 
     LoadString(hinstCabinet, IDS_TASKBAR, szPath, ARRAYSIZE(szPath));
 
@@ -6618,7 +6620,7 @@ DWORD WINAPI RunDlgThread(LPVOID data)
     hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, c_szStatic, NULL, 0   ,
         rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hinstCabinet, NULL);
     // Subclass it.
-    SetWindowLong(hwnd, GWLP_WNDPROC, (LONG)(FARPROC)RunDlgStaticSubclassWndProc);
+    SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)(FARPROC)RunDlgStaticSubclassWndProc);
 
     if (hwnd) {
         // SwitchToThisWindow(hwnd, TRUE);
@@ -8568,7 +8570,7 @@ DWORD GetMinDisplayRes(void)
 
             if (RegOpenKey(hkey, ach, &hkeyT) == ERROR_SUCCESS)
             {
-                cb = sizeof(ach);
+                cb = sizeof(ach) / sizeof(TCHAR);
                 ach[0] = 0;
                 RegQueryValueEx(hkeyT, c_szResolution, 0, NULL, (LPBYTE) &ach[0], &cb);
 

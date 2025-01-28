@@ -30,9 +30,9 @@ LPCTSTR _PathDisplayName(LPCTSTR pszPath)
 {
     // Change the window title.
     //
-    if (PathIsRootUnimpl(pszPath))
+    if (PathIsRoot(pszPath))
         return pszPath;
-    return (LPCTSTR)PathFindFileNameUnimpl(pszPath);
+    return (LPCTSTR)PathFindFileName(pszPath);
 }
 
 void _SetCabinetTitle(PFileCabinet pfc, LPOneTreeNode lpnd, LPCITEMIDLIST pidl)
@@ -156,7 +156,7 @@ void FileCabinet_GetViewRect(PFileCabinet this, RECT * prc)
 //    static const int s_rgnViews[] =  {1, 0, 1, FCIDM_STATUS, 0, 0 }; // , 1, FCIDM_TOOLBAR, 0, 0};
     UINT uSplit;
 
-    GetEffectiveClientRectUnimpl(this->hwndMain, prc, (LPINT)s_rgnViews);
+    GetEffectiveClientRect(this->hwndMain, prc, (LPINT)s_rgnViews);
 
     // We have to subtract a little more if the "map" is visible
     //
@@ -708,12 +708,12 @@ BOOL Cabinet_SetPath(PFileCabinet pfc, UINT type, LPITEMIDLIST pid)
         DWORD dwProcId;
 
         GetWindowThreadProcessId(pfc->hwndMain, &dwProcId);
-        hPath = SHAllocSharedUnimpl(pid,ILGetSize(pid),dwProcId);
+        hPath = SHAllocShared(pid,ILGetSize(pid),dwProcId);
 
         // Post it on.
         if (!PostMessage(pfc->hwndMain, CWM_SETPATH, 0, (LPARAM)hPath))
         {
-            SHFreeSharedUnimpl(hPath,dwProcId);
+            SHFreeShared(hPath,dwProcId);
             return(FALSE);
         }
         return TRUE;
@@ -1418,22 +1418,22 @@ BOOL CALLBACK CloseParentsEnumProc(HWND hwnd, LPARAM lParam)
         dwProcId = GetCurrentProcessId();
         uidlSize = ILGetSize(pfc->pidl);
 
-        hidl = SHAllocSharedUnimpl(NULL, sizeof(BOOL)+uidlSize, dwProcId);
+        hidl = SHAllocShared(NULL, sizeof(BOOL)+uidlSize, dwProcId);
         if (hidl)
         {
             LPBYTE lpb;
 
-            lpb = SHLockSharedUnimpl(hidl, dwProcId);
+            lpb = SHLockShared(hidl, dwProcId);
             if (lpb)
             {
                 *(BOOL *)lpb = TRUE;        // Yes, parent comparison
                 hmemcpy(lpb+sizeof(BOOL),pfc->pidl,uidlSize);
-                SHUnlockSharedUnimpl(lpb);
+                SHUnlockShared(lpb);
 
                 if (SendMessage(hwnd, CWM_COMPAREPIDL, (WPARAM)dwProcId, (LPARAM)hidl))
                     SendMessage(hwnd, WM_CLOSE, 0, 0);
             }
-            SHFreeSharedUnimpl(hidl,dwProcId);
+            SHFreeShared(hidl,dwProcId);
         }
     }
 
@@ -1658,12 +1658,12 @@ LRESULT CALLBACK CabinetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (!IsBadInterfacePtr(pfc->psv, IShellView))
         {
             LPITEMIDLIST pidl;
-            pidl = SHLockSharedUnimpl((HANDLE)lParam, GetCurrentProcessId());
+            pidl = SHLockShared((HANDLE)lParam, GetCurrentProcessId());
             if (pidl)
             {
                 pfc->psv->lpVtbl->SelectItem(pfc->psv, pidl, wParam);
-                SHUnlockSharedUnimpl(pidl);
-                SHFreeSharedUnimpl((HANDLE)lParam,GetCurrentProcessId());   // Receiver responsible for freeing
+                SHUnlockShared(pidl);
+                SHFreeShared((HANDLE)lParam,GetCurrentProcessId());   // Receiver responsible for freeing
             }
         }
         break;
@@ -1676,7 +1676,7 @@ LRESULT CALLBACK CabinetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (pfc->pidl) {
             LPBYTE lpb;
 
-            lpb = SHLockSharedUnimpl((HANDLE)lParam, (DWORD)wParam);
+            lpb = SHLockShared((HANDLE)lParam, (DWORD)wParam);
             if (lpb)
             {
                 BOOL    fParent;
@@ -1688,7 +1688,7 @@ LRESULT CALLBACK CabinetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                     lres = ILIsParent(pfc->pidl, pidl, FALSE);
                 else
                     lres = ILIsEqual(pfc->pidl, pidl);
-                SHUnlockSharedUnimpl(lpb);
+                SHUnlockShared(lpb);
             }
         }
         break;
@@ -1701,7 +1701,7 @@ LRESULT CALLBACK CabinetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     case CWM_CLONEPIDL:
         if (pfc->pidl)
         {
-            lres = (LRESULT)SHAllocSharedUnimpl(pfc->pidl,
+            lres = (LRESULT)SHAllocShared(pfc->pidl,
                                           ILGetSize(pfc->pidl),
                                           wParam);
         }
@@ -1716,7 +1716,7 @@ LRESULT CALLBACK CabinetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             MSG msg;
             LPITEMIDLIST pidl;
 
-            pidl = SHLockSharedUnimpl((HANDLE)lParam, GetCurrentProcessId());
+            pidl = SHLockShared((HANDLE)lParam, GetCurrentProcessId());
 
             //
             //  If another CWM_SETPATH is in the queue, we can't process this message.
@@ -1737,8 +1737,8 @@ LRESULT CALLBACK CabinetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             }
             if (pidl)
             {
-               SHUnlockSharedUnimpl(pidl);
-               SHFreeSharedUnimpl((HANDLE)lParam,GetCurrentProcessId());
+               SHUnlockShared(pidl);
+               SHFreeShared((HANDLE)lParam,GetCurrentProcessId());
             }
         }
         break;

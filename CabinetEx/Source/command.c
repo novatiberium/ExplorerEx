@@ -560,11 +560,11 @@ BOOL CALLBACK ViewOptionsDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     if (uMsg == WM_INITDIALOG)
     {
         psp = (LPPROPSHEETPAGE)lParam;
-        SetWindowLong(hDlg, DWL_USER, lParam);
+        SetWindowLongPtr(hDlg, DWL_USER, lParam);
     }
     else
     {
-        psp = (LPPROPSHEETPAGE)GetWindowLong(hDlg, DWL_USER);
+        psp = (LPPROPSHEETPAGE)GetWindowLongPtr(hDlg, DWL_USER);
     }
 
     if (psp == NULL)
@@ -788,7 +788,7 @@ HRESULT ReplaceStandardFileTypesPropSheet(LPFNADDPROPSHEETPAGE pfnAddPage,
 {
    HRESULT hr;
    TCHAR szCLSID[GUIDSTR_MAX];
-   DWORD dwcbCLSIDLen = sizeof(szCLSID);
+   DWORD dwcbCLSIDLen = sizeof(szCLSID) / sizeof(TCHAR);
 
    // The File Types hook is registered by the CLSID of an object whose
    // IShellPropSheetExt should be used to add a replacement property sheet.

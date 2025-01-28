@@ -193,8 +193,8 @@ BOOL _CreateToolbar(PFileCabinet pfc)
     }
 
     SendMessage(pfc->hwndDrives, CB_SETEXTENDEDUI, TRUE, 0L);
-    pfc->lpfnDrives = (WNDPROC)GetWindowLong(pfc->hwndDrives, GWLP_WNDPROC);
-    SetWindowLong(pfc->hwndDrives, GWLP_WNDPROC, (LONG)DrivesWndProc);
+    pfc->lpfnDrives = (WNDPROC)GetWindowLongPtr(pfc->hwndDrives, GWLP_WNDPROC);
+    SetWindowLongPtr(pfc->hwndDrives, GWLP_WNDPROC, (LONG_PTR)DrivesWndProc);
 
     hwndTips = (HWND)SendMessage(pfc->hwndToolbar, TB_GETTOOLTIPS, 0, 0L);
 
@@ -1129,8 +1129,8 @@ BOOL RunRegApps(HKEY hkeyParent, LPCTSTR szSubkey, RRA_FLAGS fFlags)
             if (!fUpdatedDesktopCursor && (fFlags & RRA_WAIT))
             {
                 fUpdatedDesktopCursor = TRUE;
-                hcurSave = (HCURSOR)SetClassLong(GetDesktopWindow(), GCLP_HCURSOR,
-                        (LONG)LoadCursor(NULL, IDC_WAIT));
+                hcurSave = (HCURSOR)SetClassLongPtr(GetDesktopWindow(), GCLP_HCURSOR,
+                        LoadCursor(NULL, IDC_WAIT));
             }
 
         // BUGBUG (Unicode, Davepl) I'm assuming that the data is UNICODE,
@@ -1223,7 +1223,7 @@ BOOL RunRegApps(HKEY hkeyParent, LPCTSTR szSubkey, RRA_FLAGS fFlags)
 
         if (fUpdatedDesktopCursor)
         {
-            SetClassLong(GetDesktopWindow(), GCLP_HCURSOR, (LONG)hcurSave);
+            SetClassLongPtr(GetDesktopWindow(), GCLP_HCURSOR, hcurSave);
         }
     }
 
@@ -1761,7 +1761,7 @@ void _CreateSavedWindows(void)
 
                 // And the root pidl;
                 pidl = NULL;    // Load will try to free non null values...
-                if (FAILED(ILLoadFromStream(pstm, &pidl)) || (pidl == NULL))
+                if (FAILED(ILLoadFromStreamEx(pstm, &pidl)) || (pidl == NULL))
                    goto Error1;
 
                 if (ILIsEmpty(pidl))
@@ -1780,7 +1780,7 @@ void _CreateSavedWindows(void)
 
                 // And the pidl;
                 pidl = NULL;    // Load will try to free non null values...
-                if (FAILED(ILLoadFromStream(pstm, &pidl)) || (pidl == NULL))
+                if (FAILED(ILLoadFromStreamEx(pstm, &pidl)) || (pidl == NULL))
                    goto Error2;
 
                 if (pidlRoot)
@@ -1790,8 +1790,8 @@ void _CreateSavedWindows(void)
                     HANDLE hIdList;
                     HANDLE hIdListRoot;
 
-                    hIdList = SHAllocSharedUnimpl(pidl,ILGetSize(pidl),GetCurrentProcessId());
-                    hIdListRoot = SHAllocSharedUnimpl(pidlRoot,ILGetSize(pidlRoot),GetCurrentProcessId());
+                    hIdList = SHAllocShared(pidl,ILGetSize(pidl),GetCurrentProcessId());
+                    hIdListRoot = SHAllocShared(pidlRoot,ILGetSize(pidlRoot),GetCurrentProcessId());
 
                     if (hIdList && hIdListRoot)
                     {
@@ -2105,7 +2105,7 @@ LRESULT Cabinet_OnDestroy(HWND hwnd)
             pfc->hmenuCur = NULL;
         }
 
-        SetWindowLong(pfc->hwndDrives, GWLP_WNDPROC, (LONG)pfc->lpfnDrives);
+        SetWindowLongPtr(pfc->hwndDrives, GWLP_WNDPROC, (LONG_PTR)pfc->lpfnDrives);
         DriveList_Reset(pfc);
 
         if (pfc->pcmFind)
@@ -2464,7 +2464,7 @@ HNFBLOCK ConvertNFItoHNFBLOCK(PNEWFOLDERINFO pInfo, DWORD dwProcId)
         uSize += uPidlRoot;
     }
 
-    hBlock = SHAllocSharedUnimpl(NULL, uSize, dwProcId);
+    hBlock = SHAllocShared(NULL, uSize, dwProcId);
     if (hBlock == NULL)
         return NULL;
 
@@ -2929,7 +2929,7 @@ BOOL ActivateOrResetOtherInstance(LPCITEMIDLIST pidl, PNEWFOLDERINFO pInfo)
             DWORD dwProcId;
 
             GetWindowThreadProcessId(hwnd, &dwProcId);
-            hPath = SHAllocSharedUnimpl(pidl, ILGetSize(pidl), dwProcId);
+            hPath = SHAllocShared(pidl, ILGetSize(pidl), dwProcId);
 
             if (hPath)
             {
@@ -3178,7 +3178,7 @@ BOOL ExploreUsingOtherInstance(LPCITEMIDLIST pidl, PNEWFOLDERINFO pInfo)
                 DWORD dwProcId;
 
                 GetWindowThreadProcessId(hwnd, &dwProcId);
-                hPath = SHAllocSharedUnimpl(pidl, ILGetSize(pidl), dwProcId);
+                hPath = SHAllocShared(pidl, ILGetSize(pidl), dwProcId);
 
                 if (hPath)
                 {
@@ -3269,7 +3269,7 @@ BOOL Cabinet_OpenFolder(PNEWFOLDERINFO pInfo)
 
                 if (pInfo->pidl)
                 {
-                    hIdList = SHAllocSharedUnimpl(pInfo->pidl,ILGetSize(pInfo->pidl),GetCurrentProcessId());
+                    hIdList = SHAllocShared(pInfo->pidl,ILGetSize(pInfo->pidl),GetCurrentProcessId());
                     wsprintf(szParams, c_szIDListParam, c_szIDListSwitch, hIdList, GetCurrentProcessId());
                     if (!hIdList)
                         return FALSE;   // We're bad off if we can't alloc
@@ -4018,9 +4018,11 @@ void _HandleCmdLine(LPTSTR lpszCmdLine, UINT nCmdShow)
 // stolen from the CRT, used to shirink our code
 
 HANDLE g_hProcessHeap = NULL;
-
+EXTERN_C BOOL WINAPI _CRT_INIT(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved);
 int _stdcall ModuleEntry(void)
 {
+    _CRT_INIT(GetModuleHandle(0), DLL_PROCESS_ATTACH, NULL);
+
     if (!SHUndocInit())
         return -1;
     int i;
@@ -4109,7 +4111,7 @@ int _stdcall ModuleEntry(void)
     // we will terminate all processes when the main thread goes away.
 
     ExitProcess(i);
-
+    _CRT_INIT(GetModuleHandle(0), DLL_PROCESS_DETACH, NULL);
     return i;
 }
 
@@ -4124,6 +4126,8 @@ int WinMainT(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmdLine, i
 
     // Very Important: Make sure to init dde prior to any Get/Peek/Wait().
     InitializeCriticalSection(&g_csThreads);
+
+    CoInitialize(NULL);
 
     g_bIsUserAnAdmin = IsUserAnAdmin();
 
@@ -4397,7 +4401,7 @@ Error2:
     }
 
 Error:
-
+    CoUninitialize();
     OneTree_Terminate();
     if (bShellInstance)
     {
@@ -4417,7 +4421,7 @@ Error:
 
 void FileCabinet_SelectItem(HWND hwnd, UINT uFlags, LPCITEMIDLIST pidlSelect)
 {
-    HANDLE hData = SHAllocSharedUnimpl(pidlSelect, ILGetSize(pidlSelect), GetCurrentProcessId());
+    HANDLE hData = SHAllocShared(pidlSelect, ILGetSize(pidlSelect), GetCurrentProcessId());
 
     if (hData)
     {

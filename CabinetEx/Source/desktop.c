@@ -208,6 +208,22 @@ PFileCabinet CreateSimpleFileCabinet(HWND hwnd, IShellBrowserVtbl * pvtbl)
 //---------------------------------------------------------------------------
 // Create desktop IShellView instance
 
+HRESULT GetFolderAndPidl(UINT csidl, IShellFolder** ppsf, LPITEMIDLIST* ppidl)
+{
+	*ppsf = NULL;
+	HRESULT hr = SHGetFolderLocation(NULL, csidl, NULL, 0, ppidl);
+	if (SUCCEEDED(hr))
+	{
+		hr = SHBindToObject(NULL, *ppidl,0, &IID_IShellFolder,ppsf);
+		if (FAILED(hr))
+		{
+			ILFree(*ppidl);
+			*ppidl = NULL;
+		}
+	}
+	return hr;
+}
+
 HWND Desktop_CreateShellView(PFileCabinet pfc, LPFOLDERSETTINGS lpfs)
 {
     LPSHELLFOLDER psf;
@@ -1085,6 +1101,7 @@ LRESULT Desktop_HandleSpecifyCompare( HANDLE hcr)
     LPCOMPAREROOT lpcr;
 
     lpcr = SHLockShared(hcr, GetCurrentProcessId());
+    //lpcr = hcr;
 
     if (lpcr)
     {
@@ -1107,8 +1124,8 @@ LRESULT Desktop_HandleSpecifyCompare( HANDLE hcr)
         }
     }
 
-    SHUnlockShared(lpcr);
-    SHFreeShared(hcr,GetCurrentProcessId());
+	SHUnlockShared(lpcr);
+	SHFreeShared(hcr, GetCurrentProcessId());
 
     return TRUE;
 }
@@ -1981,7 +1998,8 @@ HWND FindRootedDesktop(const CLSID *pclsid, LPCITEMIDLIST pidlRoot)
         if (!frds.lpcr)
             return (HWND)NULL;      // Fail, not enough memory
 
-        frds.hCR = SHAllocSharedUnimpl(frds.lpcr,frds. lpcr->uSize, frds.dwProcId);
+        //frds.hCR = SHAllocSharedUnimpl(frds.lpcr,frds. lpcr->uSize, frds.dwProcId);
+        frds.hCR = SHAllocShared(frds.lpcr,frds. lpcr->uSize, frds.dwProcId);
         LocalFree(frds.lpcr);       // We are done with this...
         if (!frds.hCR)
         {
@@ -1990,6 +2008,7 @@ HWND FindRootedDesktop(const CLSID *pclsid, LPCITEMIDLIST pidlRoot)
         }
 
         frds.lpcr = SHLockShared(frds.hCR, frds.dwProcId);
+        //frds.lpcr = frds.hCR;
         if (!frds.lpcr)
         {
             return((HWND)0);
@@ -2031,7 +2050,7 @@ BOOL Desktop_IsSameRoot(HWND hwnd, LPCITEMIDLIST pidlFolder)
     if (hwndDesktop)
     {
         dwProcId = GetCurrentProcessId();
-        hcr = SHAllocSharedUnimpl(lpcr,lpcr->uSize,dwProcId);
+        hcr = SHAllocShared(lpcr,lpcr->uSize,dwProcId);
         LocalFree(lpcr);
         if (!hcr)
         {

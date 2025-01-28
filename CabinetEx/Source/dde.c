@@ -1094,7 +1094,7 @@ TCHAR const c_szAppPaths[] = REGSTR_PATH_APPPATHS;
 LPITEMIDLIST Pidl_CreateUsingAppPaths(LPCTSTR pszApp)
 {
     TCHAR sz[MAX_PATH];
-    DWORD cb = sizeof(sz);
+    DWORD cb = sizeof(sz) / sizeof(TCHAR);
 
     DebugMsg(DM_TRACE, TEXT("c.p_cuap: Trying app paths..."));
 
@@ -1676,7 +1676,7 @@ BOOL DoDDE_ViewFolder(HWND hwndParent, LPTSTR lpszBuf,
                 if (fi.pidl)
                 {
 
-                    hIdList = SHAllocSharedUnimpl(fi.pidl,ILGetSize(fi.pidl),GetCurrentProcessId());
+                    hIdList = SHAllocShared(fi.pidl,ILGetSize(fi.pidl),GetCurrentProcessId());
                     wsprintf(szParams, c_szIDListParam, c_szIDListSwitch, hIdList, GetCurrentProcessId());
                     if (!hIdList)
                         fSuccess = FALSE;
