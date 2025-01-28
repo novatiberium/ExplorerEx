@@ -135,7 +135,7 @@
 #define ICO_DESKTOP                 103
 #define ICO_PRINTER_ERROR           104
 #define ICO_GOTO                    105
-//#define ICO_FLAG                  106
+#define ICO_WINDOWS                 106
 #define ICO_STARTMENU               107
 #define ICO_DOCMENU                 108
 

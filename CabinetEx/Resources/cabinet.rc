@@ -164,6 +164,7 @@ END
 //
 
 ICO_MYCOMPUTER          ICON DISCARDABLE    "..\\Resources\\Icons\\MYCOMP.ICO"
+ICO_WINDOWS         ICON DISCARDABLE    "..\\Resources\\Icons\\WINDOWS.ICO"
 ICO_TREEUP              ICON DISCARDABLE    "..\\Resources\\Icons\\TREEUP.ICO"
 ICO_PRINTER             ICON DISCARDABLE    "..\\Resources\\Icons\\PRINTER.ICO"
 ICO_DESKTOP             ICON DISCARDABLE    "..\\Resources\\Icons\\DESKTOP.ICO"

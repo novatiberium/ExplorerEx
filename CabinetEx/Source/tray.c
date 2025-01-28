@@ -351,7 +351,7 @@ HBITMAP CreateStartBitmap(HWND hwndTray)
         rcStart.top = 0;
         rcStart.right = cx;
         rcStart.bottom = cy;
-        hiconFlag = (HICON)LoadImage(NULL, MAKEINTRESOURCE(OIC_WINLOGO_DEFAULT), IMAGE_ICON, cySmIcon, cySmIcon, 0);
+        hiconFlag = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(ICO_WINDOWS), IMAGE_ICON, cySmIcon, cySmIcon, 0);
         // Get User to draw everything for us.
         DrawCaptionTempW(hwndTray, hdcStart, &rcStart, hfontStart, hiconFlag, szStart, DC_INBUTTON | DC_TEXT | DC_ICON | DC_NOSENDMSG);
         // Clean up Start stuff.

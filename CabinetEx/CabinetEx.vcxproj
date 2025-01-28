@@ -73,6 +73,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>explorer</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>explorer</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -194,6 +197,7 @@
     <Image Include="Resources\Icons\printerr.ico" />
     <Image Include="Resources\Icons\start.ico" />
     <Image Include="Resources\Icons\treeup.ico" />
+    <Image Include="Resources\Icons\windows.ico" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\cabdde.h" />
