@@ -153,6 +153,7 @@
     <ClCompile Include="Source\explorer.c" />
     <ClCompile Include="Source\fcext.c" />
     <ClCompile Include="Source\fldrlist.c" />
+    <ClCompile Include="Source\fsmenu.c" />
     <ClCompile Include="Source\initcab.c" />
     <ClCompile Include="Source\mainloop.c" />
     <ClCompile Include="Source\message.c" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Headers\dlgprocs.h" />
     <ClInclude Include="Headers\drivlist.h" />
     <ClInclude Include="Headers\fldrlist.h" />
+    <ClInclude Include="Headers\fsmenu.h" />
     <ClInclude Include="Headers\help.h" />
     <ClInclude Include="Headers\ids.h" />
     <ClInclude Include="Headers\onetree.h" />

@@ -2828,6 +2828,64 @@ void WINAPI ReceiveAddToRecentDocs(HANDLE hARD, DWORD dwProcId)
     SHFreeShared(hARD, dwProcId);
 }
 
+HRESULT _GetILIndexGivenPXIcon(LPEXTRACTICON pxicon, UINT uFlags, LPCITEMIDLIST pidl, int* piImage, BOOL fAnsiCrossOver)
+{
+    TCHAR szIconFile[MAX_PATH];
+#ifdef UNICODE
+    CHAR szIconFileA[MAX_PATH];
+    IExtractIconA* pxiconA = (IExtractIconA*)pxicon;
+#endif
+    int iIndex;
+    int iImage = -1;
+    UINT wFlags = 0;
+    HRESULT hres = 0;
+
+    return hres;
+}
+
+HRESULT SHGetIconFromPIDL(IShellFolder* psf, IShellIcon* psi, LPCITEMIDLIST pidl, UINT flags, int* piImage)
+{
+    IExtractIcon* pxi;
+    HRESULT hres;
+
+    if (psi)
+    {
+        hres = psi->lpVtbl->GetIconOf(psi, pidl, flags, piImage);
+    }
+
+    *piImage = Shell_GetCachedImageIndex(TEXT("shell32.dll"), II_DOCNOASSOC, 0);
+
+    hres = psf->lpVtbl->GetUIObjectOf(psf,
+        NULL, 1, pidl ? &pidl : NULL, &IID_IExtractIcon, NULL, &pxi);
+
+    if (SUCCEEDED(hres))
+    {
+        hres = _GetILIndexGivenPXIcon(pxi, flags, pidl, piImage, FALSE);
+        //pxi->lpVtbl->Release(pxi);
+    }
+#ifdef UNICODE
+    else
+    {
+        //
+        // Try the ANSI interface, see if we are dealing with an old set of code
+        //
+        IExtractIconA* pxiA;
+
+        hres = psf->lpVtbl->GetUIObjectOf(psf,
+            NULL, 1, pidl ? &pidl : NULL, &IID_IExtractIconA, NULL, &pxiA);
+        if (SUCCEEDED(hres))
+        {
+            hres = _GetILIndexGivenPXIcon(
+                (IExtractIcon*)pxiA, // cast to relieve grief
+                flags, pidl, piImage, TRUE); // indicate Ansi ver.
+            //pxiA->lpVtbl->Release(pxiA);
+        }
+    }
+#endif
+
+    return hres;
+}
+
 
 
 

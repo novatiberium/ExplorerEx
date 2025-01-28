@@ -105,6 +105,9 @@
     <ClCompile Include="Source\shundoc.c">
       <Filter>shundoc</Filter>
     </ClCompile>
+    <ClCompile Include="Source\fsmenu.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\cabinet.rc">
@@ -240,6 +243,9 @@
       <Filter>Header Files\From source tree</Filter>
     </ClInclude>
     <ClInclude Include="Headers\port32.h">
+      <Filter>Header Files\From source tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\fsmenu.h">
       <Filter>Header Files\From source tree</Filter>
     </ClInclude>
   </ItemGroup>

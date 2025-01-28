@@ -52,12 +52,12 @@
 //#include <comctrlp.h>
 #include <windowsx.h>
 #include <ole2.h>
-#include <shlobj.h>     // Includes <fcext.h>
+#include "..\Headers\shundoc.h"     // Includes <fcext.h>
 //#include <shell2.h>
 #include <cpl.h>
 #include <ddeml.h>
 #include <winreg.h>
-#include "..\Headers\shundoc.h"
+
 
 #ifdef UNICODE
 #define CP_WINNATURAL   CP_WINUNICODE

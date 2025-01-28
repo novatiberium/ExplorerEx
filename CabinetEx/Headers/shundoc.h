@@ -13,6 +13,7 @@
 #include <winnt.h>
 #include <dpa_dsa.h>
 #include <shtypes.h>
+#include <shlobj.h>
 
 
 
@@ -535,6 +536,31 @@ typedef HANDLE LPSHChangeNotificationLock;
 
 #define ShortFromResult(r)  (short)SCODE_CODE(GetScode(r))
 
+#define CSIDL_DESKTOP                   0x0000
+#define CSIDL_PROGRAMS                  0x0002
+#define CSIDL_CONTROLS                  0x0003
+#define CSIDL_PRINTERS                  0x0004
+#define CSIDL_PERSONAL                  0x0005
+#define CSIDL_FAVORITES                 0x0006
+#define CSIDL_STARTUP                   0x0007
+#define CSIDL_RECENT                    0x0008
+#define CSIDL_SENDTO                    0x0009
+#define CSIDL_BITBUCKET                 0x000a
+#define CSIDL_STARTMENU                 0x000b
+#define CSIDL_DESKTOPDIRECTORY          0x0010
+#define CSIDL_DRIVES                    0x0011
+#define CSIDL_NETWORK                   0x0012
+#define CSIDL_NETHOOD                   0x0013
+#define CSIDL_FONTS                     0x0014
+#define CSIDL_TEMPLATES                 0x0015
+#define CSIDL_COMMON_STARTMENU          0x0016
+#define CSIDL_COMMON_PROGRAMS           0X0017
+#define CSIDL_COMMON_STARTUP            0x0018
+#define CSIDL_COMMON_DESKTOPDIRECTORY   0x0019
+#define CSIDL_APPDATA                   0x001a
+#define CSIDL_PRINTHOOD                 0x001b
+
+
 //
 //	Structs
 //
@@ -880,21 +906,11 @@ typedef struct _IDLREGITEM
 
 
 
+
 //
 //	Enums
 //
 
-typedef enum
-{
-    FMF_NONE = 0x0000,
-    FMF_NOEMPTYITEM = 0x0001,
-    FMF_INCLUDEFOLDERS = 0x0002,
-    FMF_NOPROGRAMS = 0x0004,
-    FMF_FILESMASK = 0x0007,
-    FMF_LARGEICONS = 0x0008,
-    FMF_NOBREAK = 0x0010,
-    FMF_NOABORT = 0x0020,
-} FMFLAGS;
 
 
 //
@@ -984,6 +1000,8 @@ BOOL WINAPI ParseField(LPCTSTR szData, int n, LPTSTR szBuf, int iBufLen);
 DWORD WINAPI SHWaitForFileToOpen(LPCITEMIDLIST pidl, UINT uOptions, DWORD dwTimeout);
 void WINAPI SetAppStartingCursor(HWND hwnd, BOOL bSet);
 void WINAPI ReceiveAddToRecentDocs(HANDLE hARD, DWORD dwProcId);
+HRESULT SHGetIconFromPIDL(IShellFolder* psf, IShellIcon* psi, LPCITEMIDLIST pidl, UINT flags, int* piImage);
+HRESULT _GetILIndexGivenPXIcon(LPEXTRACTICON pxicon, UINT uFlags, LPCITEMIDLIST pidl, int* piImage, BOOL fAnsiCrossOver);
 
 
 // LOAD_MODULE shiz

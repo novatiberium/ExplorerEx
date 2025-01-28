@@ -10,7 +10,7 @@
 //  12-28-92 SatoNa     Calls FileIconIndex().
 //
 //---------------------------------------------------------------------------
-#include "..\Headers\cabinet.h"
+#include "..\Headers\fsmenu.h"
 #include "..\Headers\cabwnd.h"
 #include "..\Headers\rcids.h"
 #include <shellapi.h>
@@ -1859,7 +1859,7 @@ void _InitAllSubMenuPopups(HMENU hmenu)
         return;
     }
 
-    //here lies FileMenu_InitMenuPopup(hmenu);
+    FileMenu_InitMenuPopup(hmenu);
 
     for (i = GetMenuItemCount(hmenu) - 1; i >= 0 ; i--)
     {
@@ -1869,7 +1869,7 @@ void _InitAllSubMenuPopups(HMENU hmenu)
         }
         if (NULL != (hmenuSub = GetSubMenu(hmenu, i)))
         {
-            //here lies FileMenu_InitMenuPopup(hmenuSub);
+            FileMenu_InitMenuPopup(hmenuSub);
             _InitAllSubMenuPopups(hmenuSub);
         }
     }
@@ -1890,7 +1890,7 @@ void WINAPI FillFileMenus(int wID, BOOL fRecurse)
         return;
     }
 
-    //here lies FileMenu_InitMenuPopup(hmenu);
+    FileMenu_InitMenuPopup(hmenu);
 
     for (i = GetMenuItemCount(hmenu) - 1; i >= 0 ; i--)
     {
@@ -1903,8 +1903,8 @@ void WINAPI FillFileMenus(int wID, BOOL fRecurse)
         {
             if (fRecurse)
                 _InitAllSubMenuPopups(hmenuSub);
-            //else
-            //    //here lies FileMenu_InitMenuPopup(hmenuSub);
+            else
+            FileMenu_InitMenuPopup(hmenuSub);
         }
     }
     // DebugMsg(DM_IANELHK, "c.ffm:...Done");
@@ -2433,13 +2433,13 @@ void StartMenu_InsertFavouriteItems(PFileCabinet pfc, HMENU hmenu)
         if (!SHRestricted(REST_NOSTARTMENUSUBFOLDERS))
             fFilter |= SHCONTF_FOLDERS;
 
-        //cItems = //here lies FileMenu_InsertUsingPidl(hmenu, IDM_STARTMENU, pidlFav,
-            //FMF_NOEMPTYITEM | FMF_NOPROGRAMS, fFilter, //here lies FileMenu_Callback);
+        cItems = FileMenu_InsertUsingPidl(hmenu, IDM_STARTMENU, pidlFav,
+            FMF_NOEMPTYITEM | FMF_NOPROGRAMS, fFilter, FileMenu_Callback);
         if (!g_ts.uFavNotify)
             g_ts.uFavNotify = RegisterNotify(pfc->hwndMain, WMTRAY_FAVCHANGE, pidlFav);
         // If there are any items, insert a sep.
-        //if (cItems)
-            //here lies FileMenu_AppendItem(hmenu, (LPTSTR)FMAI_SEPARATOR, 0, -1, NULL, 0);
+        if (cItems)
+            FileMenu_AppendItem(hmenu, (LPTSTR)FMAI_SEPARATOR, 0, -1, NULL, 0);
         ILFree(pidlFav);
     }
 
@@ -2451,14 +2451,14 @@ void StartMenu_InsertFavouriteItems(PFileCabinet pfc, HMENU hmenu)
         if (pidlFav)
         {
 
-            //cItems = //here lies FileMenu_AppendFilesForPidl(hmenu, pidlFav, FALSE);
+            cItems = FileMenu_AppendFilesForPidl(hmenu, pidlFav, FALSE);
 
             if (!g_ts.uCommonFavNotify)
                 g_ts.uCommonFavNotify = RegisterNotify(pfc->hwndMain, WMTRAY_COMMONFAVCHANGE, pidlFav);
 
             // If there are any items, insert a sep.
-            //if (cItems)
-                //here lies FileMenu_AppendItem(hmenu, (LPTSTR)FMAI_SEPARATOR, 0, -1, NULL, 0);
+            if (cItems)
+                FileMenu_AppendItem(hmenu, (LPTSTR)FMAI_SEPARATOR, 0, -1, NULL, 0);
             ILFree(pidlFav);
         }
     }
@@ -2685,7 +2685,7 @@ BOOL WINAPI StartMenu_ControlBkgThread(STARTMENUCONTROLTHREAD smct)
             {
                 DebugMsg(DM_IANELHK, TEXT("c.sm_cbt: Waiting for %x to complete."), g_ts.hThread);
                 // Speed up stopping the filemenu.
-                //here lies FileMenu_AbortInitMenu();
+                FileMenu_AbortInitMenu();
                 g_ts.fThreadTerminate = TRUE;
                 if (WaitForSingleObject(g_ts.hThread, 1000) == WAIT_TIMEOUT)
                 {
@@ -2816,16 +2816,16 @@ BOOL StartMenu_CatMenu(HMENU hmenuDst, HMENU hmenuSrc, int iDefImage, UINT cyIte
 
             if (mii.fType & MFT_SEPARATOR)
             {
-                //here lies FileMenu_AppendItem(hmenuDst, (LPTSTR)FMAI_SEPARATOR, mii.wID, -1, NULL, 0);
+                FileMenu_AppendItem(hmenuDst, (LPTSTR)FMAI_SEPARATOR, mii.wID, -1, NULL, 0);
             }
             else if (mii.hSubMenu)
             {
                 // Submenu.
-                hmenuSubCopy = //here lies FileMenu_Create((COLORREF)-1, 0, NULL, 0, 0);
+                hmenuSubCopy = FileMenu_Create((COLORREF)-1, 0, NULL, 0, 0);
                 // NB Only allow small submenu's for now.
                 StartMenu_CatMenu(hmenuSubCopy, mii.hSubMenu, -1, 0);
 
-                //here lies FileMenu_AppendItem(hmenuDst, szText, mii.wID, iImage, hmenuSubCopy, cyItem);
+                FileMenu_AppendItem(hmenuDst, szText, mii.wID, iImage, hmenuSubCopy, cyItem);
                 if (iDefImage != -1)
                     iDefImage++;
             }
@@ -2833,11 +2833,11 @@ BOOL StartMenu_CatMenu(HMENU hmenuDst, HMENU hmenuSrc, int iDefImage, UINT cyIte
             {
                 if ((iDefImage == -1) && (mii.dwItemData != 0))
                 {
-                    //here lies FileMenu_AppendItem(hmenuDst, szText, mii.wID, mii.dwItemData, NULL, cyItem);
+                    FileMenu_AppendItem(hmenuDst, szText, mii.wID, mii.dwItemData, NULL, cyItem);
                 }
                 else
                 {
-                    //here lies FileMenu_AppendItem(hmenuDst, szText, mii.wID, iImage, NULL, cyItem);
+                    FileMenu_AppendItem(hmenuDst, szText, mii.wID, iImage, NULL, cyItem);
                 }
 
                 if (iDefImage != -1)
@@ -2860,30 +2860,30 @@ void StartMenu_RemoveUnavailableItems(void)
         // APM/Dockable stuff.
         if (!IsEjectAllowed() || g_ts.DockedState == DOCKSTATE_UNDOCKED)
         {
-                //here lies FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_EJECTPC);
+                FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_EJECTPC);
                 iSep2ItemsMissing++;
         }
 
         if (g_ts.hVPowerD == INVALID_HANDLE_VALUE || !IsSuspendAllowed())
         {
-                //here lies FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_SUSPEND);
+                FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_SUSPEND);
                 iSep2ItemsMissing++;
         }
 
         // Restictions
         if (SHRestricted(REST_NORUN))
         {
-                //here lies FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_FILERUN);
+                FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_FILERUN);
         }
         if (SHRestricted(REST_NOCLOSE))
         {
-                //here lies FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_EXITWIN);
+                FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_EXITWIN);
                 iSep2ItemsMissing++;
         }
 
         if (iSep2ItemsMissing == 3)
         {
-                //here lies FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_SEP2);
+                FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_SEP2);
         }
 
         // Setting stuff.
@@ -2896,24 +2896,24 @@ void StartMenu_RemoveUnavailableItems(void)
                         if (SHRestricted(REST_NOSETTASKBAR) && SHRestricted(REST_NOSETFOLDERS))
                         {
                                 // Yep, toast the whole settings menu.
-                                //here lies FileMenu_DeleteMenuItemByFirstID(g_ts.hmenuStart, IDM_CONTROLS);
+                                FileMenu_DeleteMenuItemByFirstID(g_ts.hmenuStart, IDM_CONTROLS);
                         }
                         else
                         {
                                 // Nope, just one.
                                 if (SHRestricted(REST_NOSETFOLDERS))
                                 {
-                                        //here lies FileMenu_DeleteItemByCmd(hmenu, IDM_CONTROLS);
-                                        // //here lies FileMenu_DeleteItemByCmd(hmenu, IDM_PROGRAMSFOLDER);
-                                        //here lies FileMenu_DeleteItemByCmd(hmenu, IDM_PRINTERS);
-                                        // //here lies FileMenu_DeleteItemByCmd(hmenu, IDM_FONTS);
+                                        FileMenu_DeleteItemByCmd(hmenu, IDM_CONTROLS);
+                                        //FileMenu_DeleteItemByCmd(hmenu, IDM_PROGRAMSFOLDER);
+                                        FileMenu_DeleteItemByCmd(hmenu, IDM_PRINTERS);
+                                        //FileMenu_DeleteItemByCmd(hmenu, IDM_FONTS);
                                 }
                                 else if (SHRestricted(REST_NOSETTASKBAR))
                                 {
-                                        //here lies FileMenu_DeleteItemByCmd(hmenu, IDM_TRAYPROPERTIES);
+                                        FileMenu_DeleteItemByCmd(hmenu, IDM_TRAYPROPERTIES);
                                 }
                                 // Delete the seperator.
-                                //here lies FileMenu_DeleteSeparator(hmenu);
+                                FileMenu_DeleteSeparator(hmenu);
                         }
                 }
                 else
@@ -2924,7 +2924,7 @@ void StartMenu_RemoveUnavailableItems(void)
         // Find menu.
         if (SHRestricted(REST_NOFIND))
         {
-                //here lies FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_MENU_FIND);
+                FileMenu_DeleteItemByCmd(g_ts.hmenuStart, IDM_MENU_FIND);
         }
 
 }
@@ -2946,14 +2946,14 @@ void StartMenu_LimitHeight(void)
     // Stop when the menu gets to big.
     for (i=cItems; i>0; i--)
     {
-        //cyMenu += HIWORD(//here lies FileMenu_GetItemExtent(g_ts.hmenuStart, i-1));
+        cyMenu += HIWORD(FileMenu_GetItemExtent(g_ts.hmenuStart, i-1));
         if (cyMenu > cyMenuMax)
             break;
     }
     // Delete overflow items.
     for (j=i; j>0; j--)
     {
-        //here lies FileMenu_DeleteItemByIndex(g_ts.hmenuStart, j-1);
+        FileMenu_DeleteItemByIndex(g_ts.hmenuStart, j-1);
     }
 }
 
@@ -2989,10 +2989,10 @@ void StartMenu_Build(PFileCabinet pfc)
             }
 
 
-            //if (g_ts.fSMSmallIcons)
-            //    g_ts.hmenuStart = //here lies FileMenu_Create((COLORREF)-1, 0, NULL, 0, FMF_NOBREAK);
-            //else
-            //    g_ts.hmenuStart = //here lies FileMenu_Create(RGB(0,0,0), 21, g_ts.hbmpStartBkg, 0, FMF_LARGEICONS|FMF_NOBREAK);
+            if (g_ts.fSMSmallIcons)
+                g_ts.hmenuStart = FileMenu_Create((COLORREF)-1, 0, NULL, 0, FMF_NOBREAK);
+            else
+                g_ts.hmenuStart = FileMenu_Create(RGB(0,0,0), 21, g_ts.hbmpStartBkg, 0, FMF_LARGEICONS|FMF_NOBREAK);
 
             if (g_ts.hmenuStart)
             {
@@ -3018,7 +3018,7 @@ void StartMenu_Build(PFileCabinet pfc)
 void StartMenu_Destroy(LPFileCabinet pfc)
 {
     StartMenu_ControlBkgThread(SMCT_STOP);
-    //here lies FileMenu_Destroy(g_ts.hmenuStart);
+    FileMenu_Destroy(g_ts.hmenuStart);
     if (pfc && pfc->pcmFind)
     {
         pfc->pcmFind->lpVtbl->Release(pfc->pcmFind);
@@ -3055,8 +3055,8 @@ int Tray_TrackMenu(PFileCabinet pfc, HMENU hmenu, BOOL fFileMenu)
     SendMessage(g_ts.hwndTrayTips, TTM_ACTIVATE, FALSE, 0L);
     if (fFileMenu)
     {
-        //iret = //here lies FileMenu_TrackPopupMenuEx(hmenu, TPM_VERTICAL | TPM_BOTTOMALIGN | TPM_RETURNCMD,
-            //tpm.rcExclude.left, tpm.rcExclude.bottom, v_hwndTray, &tpm);
+        iret = FileMenu_TrackPopupMenuEx(hmenu, TPM_VERTICAL | TPM_BOTTOMALIGN | TPM_RETURNCMD,
+            tpm.rcExclude.left, tpm.rcExclude.bottom, v_hwndTray, &tpm);
         return iret;
     }
     else
@@ -3120,8 +3120,8 @@ void ToolbarMenu(PFileCabinet pfc)
 #ifndef WINNT       // BUGBUG - Fix this when NT gets docking ability
     if (g_ts.hBIOS!=INVALID_HANDLE_VALUE)
     {
-        //here lies FileMenu_EnableItemByCmd(g_ts.hmenuStart, IDM_EJECTPC,
-                //g_ts.fDockingFlags&DOCKFLAG_WARMEJECTABLENOW);
+        FileMenu_EnableItemByCmd(g_ts.hmenuStart, IDM_EJECTPC,
+                g_ts.fDockingFlags&DOCKFLAG_WARMEJECTABLENOW);
     }
 #endif
 
@@ -4399,7 +4399,7 @@ LRESULT Tray_HandleInitMenuPopup(HMENU hmenuPopup)
         case IDM_RECENT:
             WaitForRecent();
         case IDM_PROGRAMS:
-            //if (//here lies FileMenu_InitMenuPopup(hmenuPopup))
+            if (FileMenu_InitMenuPopup(hmenuPopup))
                 break;
         case IDM_RECENTINIT:
         case IDM_PROGRAMSINIT:
@@ -4441,7 +4441,7 @@ LRESULT Tray_HandleInitMenuPopup(HMENU hmenuPopup)
             // Remove our fake initialisation menu item.
             // NB It's possible to have a filemenu here so we have to be
             // careful to check before we delete the initialisation item.
-            // We should have a //here lies FileMenu_IsFileMenu() API but this is
+            // We should have a FileMenu_IsFileMenu() API but this is
             // good enough for now.
             if (!Menu_GetItemData(hmenuPopup, 0))
             {
@@ -4449,14 +4449,14 @@ LRESULT Tray_HandleInitMenuPopup(HMENU hmenuPopup)
             }
 
             // Build the proper menu.
-            //here lies FileMenu_DeleteAllItems(hmenuPopup);
-            //here lies FileMenu_AddFilesForPidl(hmenuPopup, 0, wID, pidl, FMF_NONE, g_CabState.fMenuEnumFilter, //here lies FileMenu_Callback);
+            FileMenu_DeleteAllItems(hmenuPopup);
+            FileMenu_AddFilesForPidl(hmenuPopup, 0, wID, pidl, FMF_NONE, g_CabState.fMenuEnumFilter, FileMenu_Callback);
 
             if (pidlAlt) {
 
                 if (!SHRestricted(REST_NOCOMMONGROUPS)) {
 
-                    //here lies FileMenu_AppendFilesForPidl(hmenuPopup, pidlAlt, TRUE);
+                    FileMenu_AppendFilesForPidl(hmenuPopup, pidlAlt, TRUE);
 
                     if (wID == IDM_PROGRAMS) {
                         if (!g_ts.uCommonProgNotify) {
@@ -4482,7 +4482,7 @@ ExitAndFree:
 
     default:
         {
-            //here lies FileMenu_InitMenuPopup(hmenuPopup);
+            FileMenu_InitMenuPopup(hmenuPopup);
             break;
         }
     }
@@ -4492,16 +4492,14 @@ ExitAndFree:
 //---------------------------------------------------------------------------
 LRESULT Tray_HandleMeasureItem(HWND hwnd, LPMEASUREITEMSTRUCT lpmi)
 {
-    //return //here lies FileMenu_MeasureItem(hwnd, lpmi);
-    return;
+    return FileMenu_MeasureItem(hwnd, lpmi);
 }
 
 //---------------------------------------------------------------------------
 LRESULT Tray_HandleDrawItem(HWND hwnd, LPDRAWITEMSTRUCT lpdi)
 {
-    //return //here lies FileMenu_DrawItem(hwnd, lpdi);
+    return FileMenu_DrawItem(hwnd, lpdi);
 
-    return;
 }
 
 
@@ -4675,7 +4673,7 @@ LRESULT FileMenu_HandleCommand(HWND hwnd, WPARAM wparam)
 
     SetWaitCursor();
     hmenu = Menu_FindSubMenuByFirstID(g_ts.hmenuStart, wparam);
-    //here lies FileMenu_GetLastSelectedItemPidls(hmenu, &pidlFolder, &pidlItem);
+    FileMenu_GetLastSelectedItemPidls(hmenu, &pidlFolder, &pidlItem);
     fRes = _ExecItemByPidls(hwnd, pidlFolder, pidlItem);
     ILFree(pidlFolder);
     ILFree(pidlItem);
@@ -4728,7 +4726,7 @@ LRESULT Tray_HandleDestroy(PFileCabinet pfc)
         hmenuSub = Menu_FindSubMenuByFirstID(g_ts.hmenuStart, IDM_PROGRAMS);
         if (hmenuSub)
         {
-            //here lies FileMenu_DeleteAllItems(hmenuSub);
+            FileMenu_DeleteAllItems(hmenuSub);
         }
         else
         {
@@ -4738,7 +4736,7 @@ LRESULT Tray_HandleDestroy(PFileCabinet pfc)
         hmenuSub = Menu_FindSubMenuByFirstID(g_ts.hmenuStart, IDM_RECENT);
         if (hmenuSub)
         {
-            //here lies FileMenu_DeleteAllItems(hmenuSub);
+            FileMenu_DeleteAllItems(hmenuSub);
         }
         else
         {
@@ -4779,7 +4777,7 @@ void InvalidateRebuildMenu(WORD wID, HMENU hmenuSub)
             SetTimer(v_hwndTray, IDT_REBUILDMENU, 1000, NULL);
         } else {
             StartMenu_ControlBkgThread(SMCT_STOP);
-            //here lies FileMenu_Invalidate(hmenuSub);
+            FileMenu_Invalidate(hmenuSub);
             // set a timer to fill this in later...
             // do it later in case of multiple changes and also
             // because we want to return immediately and do the
@@ -4805,7 +4803,7 @@ void TrayProgramsInvalidateMenu(HMENU hmenuSub, LPCITEMIDLIST pidl, LPCITEMIDLIS
 
         pidlChild = ILClone(pidlChild);
         ILRemoveLastID(pidlChild);
-        //hmenu = //here lies FileMenu_FindSubMenuByPidl(hmenuSub, pidlChild);
+        hmenu = FileMenu_FindSubMenuByPidl(hmenuSub, pidlChild);
         // doing this will catch the case of "everything else"
         // and just nuke the whole menu tree if we couldn't find a menu
         // for this pidl
@@ -4831,7 +4829,7 @@ void TrayRevertMenuToInitial(HMENU hmenuSub, UINT idMenu, UINT idTimer)
     UnregisterNotify(*puNotify);
     *puNotify = 0;
 
-    //here lies FileMenu_DeleteAllItems(hmenuSub);
+    FileMenu_DeleteAllItems(hmenuSub);
     InsertMenu(hmenuSub, 0, MF_BYPOSITION, idMenu, c_szNULL);
     SetTimer(v_hwndTray, idTimer, 10 * 1000, NULL);
 }
@@ -5687,8 +5685,8 @@ LRESULT CALLBACK TrayWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WMTRAY_SETHOTKEYENABLE:
         return Tray_SetHotkeyEnable(hWnd, (BOOL)wParam);
 
-    //case WM_MENUCHAR:
-    //    return //here lies FileMenu_HandleMenuChar((HMENU)lParam, (TCHAR)LOWORD(wParam));
+    case WM_MENUCHAR:
+        return FileMenu_HandleMenuChar((HMENU)lParam, (TCHAR)LOWORD(wParam));
 
     case WM_COPYDATA:
         // Check for NULL it can happen if user runs out of selectors or memory...
@@ -7005,7 +7003,7 @@ void TrayCommand(PFileCabinet pfc, UINT idCmd)
     case IDM_STARTMENU:
     case IDM_RECENT:
     case IDM_PROGRAMS:
-        //here lies FileMenu_HandleCommand(pfc->hwndMain, idCmd);
+        FileMenu_HandleCommand(pfc->hwndMain, idCmd);
         break;
 
     case IDM_CONTROLS:
