@@ -252,6 +252,27 @@
     <ClInclude Include="desktop2\userpane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="uemapp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="immersive\ImmersiveFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="immersive\ImmersiveShell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="immersive\ImmersiveCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="immersive\hookapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="immersive\public.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="immersive\dbgprint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="explorer.rcv">
@@ -566,6 +587,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="desktop2\wrapctl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="immersive\ImmersiveFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="immersive\ImmersiveShell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="immersive\ImmersiveInit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="immersive\dbgprint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

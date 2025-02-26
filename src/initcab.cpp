@@ -1,3 +1,5 @@
+#define EXPLOREREX_ENABLE_UWP 1
+
 #include "cocreateinstancehook.h"
 #include "shfusion.h"
 #include "cabinet.h"
@@ -1828,6 +1830,10 @@ public:
     }
 };
 
+#if EXPLOREREX_ENABLE_UWP
+#include "immersive/public.h"
+#endif
+
 int ExplorerWinMain(HINSTANCE hInstance, HINSTANCE hPrev, LPTSTR pszCmdLine, int nCmdShow)
 {
 #ifndef RELEASE
@@ -2017,8 +2023,6 @@ int ExplorerWinMain(HINSTANCE hInstance, HINSTANCE hPrev, LPTSTR pszCmdLine, int
 
             if (!IsAnyShellWindowAlreadyPresent())
             {
-                //temp
-                //SetThemeAppProperties(NULL);
                 hDesktop = CreateDesktopAndTray();
             }
 
@@ -2030,6 +2034,12 @@ int ExplorerWinMain(HINSTANCE hInstance, HINSTANCE hPrev, LPTSTR pszCmdLine, int
 
             if (hDesktop)
             {
+#if EXPLOREREX_ENABLE_UWP
+                SetCurrentProcessExplicitAppUserModelID(L"Microsoft.Windows.Explorer");
+                HookImmersive();
+                CreateTwinUI_UWP();
+#endif
+
                 // Enable display of balloons in the tray...
                 PostMessage(v_hwndTray, TM_SHOWTRAYBALLOON, TRUE, 0);
 

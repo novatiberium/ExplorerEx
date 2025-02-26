@@ -465,6 +465,12 @@ del "$(IntermediateOutputPath)temp.res"
     <ClInclude Include="desktop2\stdafx.h" />
     <ClInclude Include="desktop2\userpane.h" />
     <ClInclude Include="desktopp.h" />
+    <ClInclude Include="immersive\dbgprint.h" />
+    <ClInclude Include="immersive\hookapi.h" />
+    <ClInclude Include="immersive\ImmersiveCommon.h" />
+    <ClInclude Include="immersive\ImmersiveFactory.h" />
+    <ClInclude Include="immersive\ImmersiveShell.h" />
+    <ClInclude Include="immersive\public.h" />
     <ClInclude Include="patternhelper.h" />
     <ClInclude Include="MinHook.h" />
     <ClInclude Include="ntperf.h" />
@@ -627,6 +633,10 @@ del "$(IntermediateOutputPath)temp.res"
     <ClCompile Include="dllload.cpp" />
     <ClCompile Include="hostutil.cpp" />
     <ClCompile Include="ieguidp.cpp" />
+    <ClCompile Include="immersive\dbgprint.cpp" />
+    <ClCompile Include="immersive\ImmersiveFactory.cpp" />
+    <ClCompile Include="immersive\ImmersiveInit.cpp" />
+    <ClCompile Include="immersive\ImmersiveShell.cpp" />
     <ClCompile Include="initcab.cpp" />
     <ClCompile Include="libx.cpp" />
     <ClCompile Include="mixer.cpp" />
